@@ -34,10 +34,10 @@ function isNumber(n) {
   return !Number.isNaN(parseFloat(n)) && !Number.isNaN(n - 0);
 }
 
-const getRandomJokeJSON = () => {
+const getRandomJoke = () => {
   // pick a random index
   const randJoke = jokes[Math.floor(Math.random() * jokes.length)];
-  return JSON.stringify(randJoke);
+  return randJoke;
 };
 
 const getRandomJokes = (pLimit = 1) => {
@@ -52,19 +52,49 @@ const getRandomJokes = (pLimit = 1) => {
   for (let i = 0; i < limit; i += 1) {
     randomJokes.push(jokes[i]);
   }
-  return JSON.stringify(randomJokes);
+  return randomJokes;
 };
 
-const getRandomJokeResponse = (request, response) => {
-  response.writeHead(200, { 'Content-Type': 'application/json' });
-  response.write(getRandomJokeJSON());
+const respond = (request, response, content, type) => {
+  response.writeHead(200, { 'Content-Type': type });
+  response.write(content);
   response.end();
 };
 
-const getRandomJokesResponse = (request, response, params) => {
-  response.writeHead(200, { 'Content-Type': 'application/json' });
-  response.write(getRandomJokes(params.get('limit')));
-  response.end();
+// /random-joke
+const getRandomJokeResponse = (request, response, params, acceptedTypes) => {
+  const joke = getRandomJoke();
+
+  if (acceptedTypes.includes('text/xml')) {
+    const responseXML = `
+    <joke>
+      <q>${joke.q}</q>
+      <a>${joke.a}</a>
+    </joke>`;
+    return respond(request, response, responseXML, 'text/xml');
+  }
+
+  return respond(request, response, JSON.stringify(joke), 'application/json');
+};
+
+// random-jokes?limit=x
+const getRandomJokesResponse = (request, response, params, acceptedTypes) => {
+  const randJokes = getRandomJokes(params.get('limit'));
+
+  if (acceptedTypes.includes('text/xml')) {
+    let responseXML = '<jokes>';
+    for (let i = 0; i < randJokes.length; i += 1) {
+      responseXML += `
+      <joke>
+        <q>${randJokes[i].q}</q>
+        <a>${randJokes[i].a}</a>
+      </joke>`;
+    }
+    responseXML += '</jokes>';
+    return respond(request, response, responseXML, 'text/xml');
+  }
+
+  return respond(request, response, JSON.stringify(randJokes), 'application/json');
 };
 
 module.exports = {

@@ -1,6 +1,7 @@
 const http = require('http');
+
 const htmlHandler = require('./htmlResponses.js');
-const jsonHandler = require('./jsonResponses.js');
+const jsonHandler = require('./responses.js');
 
 const port = process.env.PORT || process.env.NODE_PORT || 3000;
 
@@ -14,9 +15,11 @@ const onRequest = (request, response) => {
   const baseUrl = `http://${request.headers.host}/`;
   const parsedUrl = new URL(request.url, baseUrl);
   const { pathname, searchParams } = parsedUrl;
+  let acceptedTypes = request.headers.accept && request.headers.accept.split(',');
+  acceptedTypes = acceptedTypes || [];
 
   if (urlStruct[pathname]) {
-    urlStruct[pathname](request, response, searchParams);
+    urlStruct[pathname](request, response, searchParams, acceptedTypes);
   } else {
     urlStruct.notFound(request, response);
   }
