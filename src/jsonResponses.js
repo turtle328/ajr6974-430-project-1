@@ -29,6 +29,10 @@ function shuffle(a) {
   }
   return a;
 }
+// https://stackoverflow.com/a/1421988/7838349
+function isNumber(n) {
+  return !isNaN(parseFloat(n)) && !isNaN(n - 0);
+}
 
 const getRandomJokeJSON = () => {
   // pick a random index
@@ -37,8 +41,11 @@ const getRandomJokeJSON = () => {
 };
 
 const getRandomJokes = (pLimit = 1) => {
-  let limit = pLimit || 1;
-  limit = Math.floor(Math.abs(limit));
+  // is limit a number?
+  let limit = isNumber(pLimit) ? pLimit : 1;
+  // is limit < 0?
+  limit = limit > 0 ? limit : 1;
+  // is limit > than size of jokes array?
   limit = limit <= jokes.length ? limit : jokes.length;
   shuffle(jokes);
   const randomJokes = [];
