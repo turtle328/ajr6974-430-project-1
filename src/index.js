@@ -6,16 +6,17 @@ const port = process.env.PORT || process.env.NODE_PORT || 3000;
 
 const urlStruct = {
   '/random-joke': jsonHandler.getRandomJokeResponse,
+  '/random-jokes': jsonHandler.getRandomJokesResponse,
   notFound: htmlHandler.get404Response,
 };
 
 const onRequest = (request, response) => {
   const baseUrl = `http://${request.headers.host}/`;
   const parsedUrl = new URL(request.url, baseUrl);
-  const { pathname } = parsedUrl;
+  const { pathname, searchParams } = parsedUrl;
 
   if (urlStruct[pathname]) {
-    urlStruct[pathname](request, response);
+    urlStruct[pathname](request, response, searchParams);
   } else {
     urlStruct.notFound(request, response);
   }
