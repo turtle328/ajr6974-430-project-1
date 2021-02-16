@@ -31,7 +31,7 @@ function shuffle(a) {
 }
 // https://stackoverflow.com/a/1421988/7838349
 function isNumber(n) {
-  return !isNaN(parseFloat(n)) && !isNaN(n - 0);
+  return !Number.isNaN(parseFloat(n)) && !Number.isNaN(n - 0);
 }
 
 const getRandomJokeJSON = () => {
