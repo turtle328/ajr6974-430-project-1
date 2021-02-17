@@ -34,6 +34,10 @@ function isNumber(n) {
   return !Number.isNaN(parseFloat(n)) && !Number.isNaN(n - 0);
 }
 
+// Source: https://stackoverflow.com/questions/2219526/how-many-bytes-in-a-javascript-string/29955838
+// Refactored to an arrow function by ACJ
+const getBinarySize = (string) => Buffer.byteLength(string, 'utf8');
+
 const getRandomJoke = () => {
   // pick a random index
   const randJoke = jokes[Math.floor(Math.random() * jokes.length)];
@@ -55,46 +59,65 @@ const getRandomJokes = (pLimit = 1) => {
   return randomJokes;
 };
 
-const respond = (request, response, content, type) => {
+const respond = (request, response, content, acceptedTypes) => {
+  const type = acceptedTypes.includes('text/xml') ? 'text/xml' : 'application/json';
   response.writeHead(200, { 'Content-Type': type });
   response.write(content);
   response.end();
 };
 
-// /random-joke
-const getRandomJokeResponse = (request, response, params, acceptedTypes) => {
+const headerResponse = (request, response, content, acceptedTypes) => {
+  const type = acceptedTypes.includes('text/xml') ? 'text/xml' : 'application/json';
+  response.writeHead(200, {
+    'Content-Length': getBinarySize(content),
+    'Content-Type': type,
+  }).end();
+};
+
+// for /random-joke endpoint
+const getRandomJokeResponse = (request, response, params, acceptedTypes, httpMethod) => {
   const joke = getRandomJoke();
 
+  let content;
   if (acceptedTypes.includes('text/xml')) {
-    const responseXML = `
+    content = `
     <joke>
       <q>${joke.q}</q>
       <a>${joke.a}</a>
     </joke>`;
-    return respond(request, response, responseXML, 'text/xml');
+  } else {
+    content = JSON.stringify(joke);
   }
 
-  return respond(request, response, JSON.stringify(joke), 'application/json');
+  if (httpMethod === 'HEAD') {
+    return headerResponse(request, response, content, acceptedTypes);
+  }
+  return respond(request, response, content, acceptedTypes);
 };
 
-// random-jokes?limit=x
-const getRandomJokesResponse = (request, response, params, acceptedTypes) => {
+// for /random-jokes?limit=x endpoint
+const getRandomJokesResponse = (request, response, params, acceptedTypes, httpMethod) => {
   const randJokes = getRandomJokes(params.get('limit'));
 
+  let content;
   if (acceptedTypes.includes('text/xml')) {
-    let responseXML = '<jokes>';
+    content = '<jokes>';
     for (let i = 0; i < randJokes.length; i += 1) {
-      responseXML += `
+      content += `
       <joke>
         <q>${randJokes[i].q}</q>
         <a>${randJokes[i].a}</a>
       </joke>`;
     }
-    responseXML += '</jokes>';
-    return respond(request, response, responseXML, 'text/xml');
+    content += '</jokes>';
+  } else {
+    content = JSON.stringify(randJokes);
   }
 
-  return respond(request, response, JSON.stringify(randJokes), 'application/json');
+  if (httpMethod === 'HEAD') {
+    return headerResponse(request, response, content, acceptedTypes);
+  }
+  return respond(request, response, content, acceptedTypes);
 };
 
 module.exports = {
