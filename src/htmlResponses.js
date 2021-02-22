@@ -1,11 +1,23 @@
 const fs = require('fs');
 
 const errorPage = fs.readFileSync(`${__dirname}/../client/error.html`);
+const clientPage = fs.readFileSync(`${__dirname}/../client/joke-client.html`);
 
-const get404Response = (request, response) => {
+const getHtmlResponse = (request, response, page) => {
   response.writeHead(404, { 'Content-Type': 'text/html' });
-  response.write(errorPage);
+  response.write(page);
   response.end();
 };
 
-module.exports.get404Response = get404Response;
+const get404Response = (request, response) => {
+  getHtmlResponse(request, response, errorPage);
+};
+
+const getClientResponse = (request, response) => {
+  getHtmlResponse(request, response, clientPage);
+};
+
+module.exports = {
+  get404Response,
+  getClientResponse,
+};
