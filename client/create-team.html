@@ -38,7 +38,7 @@
   <script>
     let contentContainer;
     const pokeDataList = [];
-    const COUNT = 151;
+    const COUNT = 493;
     // pokemon type colors in hex
     const typeColors = {
       "normal": '#A8A77A',
@@ -85,46 +85,39 @@
         .then(response => response.json())
         .then(pokeData => {
           pokeDataList.push(pokeData);
-          if (pokeDataList.length == COUNT) {
-            displayPokemon();
-          }
+          displayPokemon(pokeData);
         });
     }
 
-    const displayPokemon = () => {
-      console.log(pokeDataList[1]);
+    const displayPokemon = (pokeData) => {
+      const types = [];
+      const pokeContainer = document.createElement('div');
+      const pokeDiv = document.createElement('div');
+      const pokeName = document.createElement('p');
+      const pokeSprite = document.createElement('img');
 
-      for (const pokeData of pokeDataList) {
-        const types = [];
-        const pokeContainer = document.createElement('div');
-        const pokeDiv = document.createElement('div');
-        const pokeName = document.createElement('p');
-        const pokeSprite = document.createElement('img');
-
-        pokeName.innerHTML = capitalize(pokeData.name);
-        for (const type of pokeData.types) {
-          types.push(type.type.name);
-        }
-        pokeSprite.src = pokeData.sprites.other['official-artwork'].front_default;
-
-        if (types.length == 1) {
-          pokeDiv.style.backgroundColor = typeColors[types[0]];
-        } else {
-          pokeDiv.style.background = `linear-gradient(90deg, ${typeColors[types[0]]} 50%, ${typeColors[types[1]]} 50%)`;
-        }
-
-        pokeDiv.appendChild(pokeSprite);
-        pokeDiv.appendChild(pokeName);
-        pokeContainer.classList.add('pure-u-1-2', 'pure-u-md-1-3', 'pure-u-lg-1-5');
-        pokeDiv.classList.add('pokeDiv');
-        pokeContainer.appendChild(pokeDiv)
-        contentContainer.appendChild(pokeContainer);
+      pokeName.innerHTML = capitalize(pokeData.name);
+      for (const type of pokeData.types) {
+        types.push(type.type.name);
       }
+      pokeSprite.src = pokeData.sprites.other['official-artwork'].front_default;
+
+      if (types.length == 1) {
+        pokeDiv.style.backgroundColor = typeColors[types[0]];
+      } else {
+        pokeDiv.style.background = `linear-gradient(90deg, ${typeColors[types[0]]} 50%, ${typeColors[types[1]]} 50%)`;
+      }
+
+      pokeDiv.appendChild(pokeSprite);
+      pokeDiv.appendChild(pokeName);
+      pokeContainer.classList.add('pure-u-1-2', 'pure-u-md-1-3', 'pure-u-lg-1-5');
+      pokeDiv.classList.add('pokeDiv');
+      pokeContainer.appendChild(pokeDiv)
+      contentContainer.appendChild(pokeContainer);
     }
 
     const init = () => {
       contentContainer = document.querySelector('.pure-g');
-      // TODO: Populate page with all 151 pokemon (possibly add more pokemon later)
       fetchPokemon();
       // TODO: Set up event listeners on buttons
     }
