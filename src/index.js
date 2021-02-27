@@ -3,17 +3,21 @@ const http = require('http');
 const htmlHandler = require('./htmlResponses.js');
 const cssHandler = require('./cssResponses.js');
 const jsonHandler = require('./responses.js');
-const mediaHandler = require('./mediaResponses.js')
+const mediaHandler = require('./mediaResponses.js');
 
 const port = process.env.PORT || process.env.NODE_PORT || 3000;
 
 const urlStruct = {
   '/': htmlHandler.getHomeResponse,
+  '/create-team': htmlHandler.getCreateResponse,
+  '/random-team': htmlHandler.getRandomResponse,
+  '/edit-team': htmlHandler.getEditResponse,
+  '/admin': htmlHandler.getAdminResponse,
   '/random-joke': jsonHandler.getRandomJokeResponse,
   '/random-jokes': jsonHandler.getRandomJokesResponse,
-  '/default-styles.css': cssHandler.getDefaultStyleResponse,
   '/joke-client': htmlHandler.getClientResponse,
-  '/sleeping-pikachu.png':mediaHandler.getPikachu, 
+  '/default-styles.css': cssHandler.getDefaultStyleResponse,
+  '/sleeping-pikachu.png': mediaHandler.getPikachu,
   notFound: htmlHandler.get404Response,
 };
 

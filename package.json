@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "pretest": "eslint ./src --fix",
+    "pretest": "eslint ./ --fix",
     "test": "echo \"Tests complete\"",
     "start": "node ./src/index.js",
     "nodemon": "nodemon ./src/index.js -e js,html,css",
@@ -19,5 +19,6 @@
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-plugin-import": "^2.22.1",
     "nodemon": "^2.0.7"
-  }
+  },
+  "dependencies": {}
 }

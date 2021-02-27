@@ -12,3 +12,9 @@
   background-color: red;
   color: white;
 }
+
+.selected, .selected:hover, .selected:focus {
+  cursor: default;
+  background-color: rgb(160, 160, 160);
+  color: white;
+}

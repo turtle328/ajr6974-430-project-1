@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pokemon Team Builder</title>
+  <link rel="stylesheet" href="https://unpkg.com/purecss@2.0.5/build/pure-min.css"
+    integrity="sha384-LTIDeidl25h2dPxrB2Ekgc9c7sEC3CWGM6HeFmuDNUjX76Ert4Z4IY714dhZHPLd" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://unpkg.com/purecss@2.0.5/build/grids-responsive-min.css" />
+  <link rel="stylesheet" href="default-styles.css">
+
+  <style>
+    p {
+      margin: 0;
+      padding: 1em 0;
+      background-color: black;
+      color: white;
+    }
+
+    img {
+      max-height: 200px;
+    }
+
+    .container {
+      padding-top: 1em;
+    }
+
+    .pokeDiv {
+      box-sizing: border-box;
+      text-align: center;
+      border: solid 1px black;
+      margin: 0.1em;
+    }
+  </style>
+
+  <script>
+    let contentContainer;
+    const pokeDataList = [];
+    const COUNT = 151;
+    // pokemon type colors in hex
+    const typeColors = {
+      "normal": '#A8A77A',
+      "fighting": '#C22E28',
+      "flying": '#A98FF3',
+      "poison": '#A33EA1',
+      "ground": '#E2BF65',
+      "rock": '#B6A136',
+      "bug": '#A6B91A',
+      "ghost": '#735797',
+      "steel": '#B7B7CE',
+      "fire": '#EE8130',
+      "water": '#6390F0',
+      "grass": '#7AC74C',
+      "electric": '#F7D02C',
+      "psychic": '#F95587',
+      "ice": '#96D9D6',
+      "dragon": '#6F35FC',
+      "dark": '#705746',
+      "fairy": '#D685AD',
+    }
+
+    // https://flaviocopes.com/how-to-uppercase-first-letter-javascript/
+    const capitalize = (s) => {
+      if (typeof s !== 'string') return '';
+      return s.charAt(0).toUpperCase() + s.slice(1);
+    }
+
+    // use the pokeapi to get the first 151 pokemon
+    const fetchPokemon = () => {
+      const url = `https://pokeapi.co/api/v2/pokemon?limit=${COUNT}`;
+      fetch(url)
+        .then(response => response.json())
+        .then(pokeList => {
+          for (const poke of pokeList.results) {
+            fetchPokemonData(poke);
+          }
+        });
+    }
+
+    const fetchPokemonData = (poke) => {
+      let url = poke.url;
+      fetch(url)
+        .then(response => response.json())
+        .then(pokeData => {
+          pokeDataList.push(pokeData);
+          if (pokeDataList.length == COUNT) {
+            displayPokemon();
+          }
+        });
+    }
+
+    const displayPokemon = () => {
+      console.log(pokeDataList[1]);
+
+      for (const pokeData of pokeDataList) {
+        const types = [];
+        const pokeContainer = document.createElement('div');
+        const pokeDiv = document.createElement('div');
+        const pokeName = document.createElement('p');
+        const pokeSprite = document.createElement('img');
+
+        pokeName.innerHTML = capitalize(pokeData.name);
+        for (const type of pokeData.types) {
+          types.push(type.type.name);
+        }
+        pokeSprite.src = pokeData.sprites.other['official-artwork'].front_default;
+
+        if (types.length == 1) {
+          pokeDiv.style.backgroundColor = typeColors[types[0]];
+        } else {
+          pokeDiv.style.background = `linear-gradient(90deg, ${typeColors[types[0]]} 50%, ${typeColors[types[1]]} 50%)`;
+        }
+
+        pokeDiv.appendChild(pokeSprite);
+        pokeDiv.appendChild(pokeName);
+        pokeContainer.classList.add('pure-u-1-2', 'pure-u-md-1-3', 'pure-u-lg-1-5');
+        pokeDiv.classList.add('pokeDiv');
+        pokeContainer.appendChild(pokeDiv)
+        contentContainer.appendChild(pokeContainer);
+      }
+    }
+
+    const init = () => {
+      contentContainer = document.querySelector('.pure-g');
+      // TODO: Populate page with all 151 pokemon (possibly add more pokemon later)
+      fetchPokemon();
+      // TODO: Set up event listeners on buttons
+    }
+
+    window.onload = init;
+  </script>
+</head>
+
+<body>
+  <nav class="pure-menu pure-menu-horizontal">
+    <a href="/" class="pure-menu-heading">Pokémon Team Builder</a>
+    <ul class="pure-menu-list">
+      <li class="pure-menu-item">
+        <a href="/" class="pure-menu-link">Home</a>
+      </li>
+      <li class="pure-menu-item">
+        <a href="#" class="pure-menu-link selected">Create a team</a>
+      </li>
+      <li class="pure-menu-item">
+        <a href="/random-team" class="pure-menu-link">Random teams</a>
+      </li>
+      <li class="pure-menu-item">
+        <a href="/edit-team" class="pure-menu-link">View/Edit a team</a>
+      </li>
+      <li class="pure-menu-item">
+        <a href="/admin" class="pure-menu-link">Admin</a>
+      </li>
+    </ul>
+  </nav>
+
+  <div class="pure-g container">
+
+  </div>
+</body>
+
+</html>
