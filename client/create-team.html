@@ -3,7 +3,6 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pokemon Team Builder</title>
   <link rel="stylesheet" href="https://unpkg.com/purecss@2.0.5/build/pure-min.css"
@@ -101,6 +100,7 @@
         types.push(type.type.name);
       }
       pokeSprite.src = pokeData.sprites.other['official-artwork'].front_default;
+      pokeSprite.alt = `sprite of ${pokeData.name}`;
 
       if (types.length == 1) {
         pokeDiv.style.backgroundColor = typeColors[types[0]];

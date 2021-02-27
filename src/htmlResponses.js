@@ -9,7 +9,7 @@ const editPage = fs.readFileSync(`${__dirname}/../client/view-edit-team.html`);
 const adminPage = fs.readFileSync(`${__dirname}/../client/admin.html`);
 
 const getHtmlResponse = (request, response, page, code) => {
-  response.writeHead(code, { 'Content-Type': 'text/html' });
+  response.writeHead(code, { 'Content-Type': 'text/html; charset=utf-8' });
   response.write(page);
   response.end();
 };
