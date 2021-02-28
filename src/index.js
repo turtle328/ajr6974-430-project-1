@@ -4,6 +4,7 @@ const htmlHandler = require('./htmlResponses.js');
 const cssHandler = require('./cssResponses.js');
 const jsonHandler = require('./responses.js');
 const mediaHandler = require('./mediaResponses.js');
+const postHandler = require('./postHandler.js');
 
 const port = process.env.PORT || process.env.NODE_PORT || 3000;
 
@@ -18,6 +19,9 @@ const urlStruct = {
   '/joke-client': htmlHandler.getClientResponse,
   '/default-styles.css': cssHandler.getDefaultStyleResponse,
   '/sleeping-pikachu.png': mediaHandler.getPikachu,
+  '/team-placeholder.jpg': mediaHandler.getPlaceholder,
+  '/addTeam': postHandler.addTeam,
+  '/getTeams': jsonHandler.getTeams,
   notFound: htmlHandler.get404Response,
 };
 

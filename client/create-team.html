@@ -11,33 +11,87 @@
   <link rel="stylesheet" href="default-styles.css">
 
   <style>
-    p {
-      margin: 0;
-      padding: 1em 0;
-      background-color: black;
-      color: white;
+    form {
+      display: flex;
+      align-self: center;
+    }
+
+    button {
+      margin-top: 5px;
     }
 
     img {
       max-height: 200px;
     }
 
-    .container {
+    img.sprite {
+      max-height: 80px;
+    }
+
+    #response {
+      color: white;
+    }
+
+    #pokemon-selection {
       padding-top: 1em;
+    }
+
+    #team-builder {
+      padding: 1em 0;
+      background-color: rgba(0, 0, 0, 0.5);
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+
+    .pokeName {
+      margin: 0;
+      padding: 1em 0;
+      background-color: black;
+      color: white;
+      text-transform: capitalize;
+    }
+
+    .poke-name {
+      text-transform: capitalize;
+      color: white;
+    }
+
+    .poke-type-1,
+    .poke-type-2 {
+      text-transform: uppercase;
+      color: white;
+      font-weight: 600;
+      padding: 4px;
+    }
+
+    .team-slot {
+      text-align: center;
     }
 
     .pokeDiv {
       box-sizing: border-box;
       text-align: center;
       border: solid 1px black;
-      margin: 0.1em;
+      margin: 2px;
+      transition: 0.2s;
+      transition-property: transform;
+      cursor: pointer;
+    }
+
+    .pokeDiv:hover {
+      transform: scale(1.1);
     }
   </style>
 
   <script>
+    const COUNT = 493;
+    const TEAM_SIZE = 6;
+
     let contentContainer;
     const pokeDataList = [];
-    const COUNT = 493;
+    const team = [];
+    console.log(team);
     // pokemon type colors in hex
     const typeColors = {
       "normal": '#A8A77A',
@@ -58,12 +112,6 @@
       "dragon": '#6F35FC',
       "dark": '#705746',
       "fairy": '#D685AD',
-    }
-
-    // https://flaviocopes.com/how-to-uppercase-first-letter-javascript/
-    const capitalize = (s) => {
-      if (typeof s !== 'string') return '';
-      return s.charAt(0).toUpperCase() + s.slice(1);
     }
 
     // use the pokeapi to get the first 151 pokemon
@@ -95,14 +143,14 @@
       const pokeName = document.createElement('p');
       const pokeSprite = document.createElement('img');
 
-      pokeName.innerHTML = capitalize(pokeData.name);
+      pokeName.innerHTML = pokeData.name;
       for (const type of pokeData.types) {
         types.push(type.type.name);
       }
       pokeSprite.src = pokeData.sprites.other['official-artwork'].front_default;
       pokeSprite.alt = `sprite of ${pokeData.name}`;
 
-      if (types.length == 1) {
+      if (types.length === 1) {
         pokeDiv.style.backgroundColor = typeColors[types[0]];
       } else {
         pokeDiv.style.background = `linear-gradient(90deg, ${typeColors[types[0]]} 50%, ${typeColors[types[1]]} 50%)`;
@@ -112,14 +160,127 @@
       pokeDiv.appendChild(pokeName);
       pokeContainer.classList.add('pure-u-1-2', 'pure-u-md-1-3', 'pure-u-lg-1-5');
       pokeDiv.classList.add('pokeDiv');
+      pokeName.classList.add('pokeName');
+
+      pokeDiv.onclick = (e) => {
+        const data = {
+          name: pokeName.innerHTML,
+          types,
+          sprite: pokeSprite.src,
+        };
+        addToTeam(data);
+      }
+
       pokeContainer.appendChild(pokeDiv)
       contentContainer.appendChild(pokeContainer);
     }
 
+    const addToTeam = (pokeData) => {
+      // if team is maxed out return
+      if (team.length >= TEAM_SIZE) {
+        return;
+      }
+
+      team.push(pokeData);
+      displayTeam();
+    }
+
+    const displayTeam = () => {
+      for (let i = 0; i < team.length; i++) {
+        const pokeDiv = document.querySelector(`#team-slot-${i + 1}`);
+        const teamSprite = pokeDiv.querySelector(`img`);
+        const pokeName = pokeDiv.querySelector(`.poke-name`);
+        const pokeType1 = pokeDiv.querySelector(`.poke-type-1`);
+        const pokeType2 = pokeDiv.querySelector(`.poke-type-2`);
+
+        pokeType1.innerHTML = team[i].types[0];
+        pokeType2.innerHTML = team[i].types[1] !== undefined ? team[i].types[1] : "";
+        pokeType1.style.backgroundColor = typeColors[team[i].types[0]];
+        pokeType2.style.backgroundColor = team[i].types[1] !== undefined ? typeColors[team[i].types[1]] : 'unset';
+        teamSprite.src = team[i].sprite;
+        pokeName.innerHTML = team[i].name;
+        pokeDiv.style.cursor = 'pointer';
+      }
+
+      for (let i = TEAM_SIZE - 1; i >= team.length; i--) {
+        const divToSelect = `#team-slot-${i + 1}`;
+        const pokeDiv = document.querySelector(`#team-slot-${i + 1}`);
+        const teamSprite = pokeDiv.querySelector(`img`);
+        const pokeName = pokeDiv.querySelector(`.poke-name`);
+        const pokeType1 = pokeDiv.querySelector(`.poke-type-1`);
+        const pokeType2 = pokeDiv.querySelector(`.poke-type-2`);
+
+        teamSprite.src = 'team-placeholder.jpg';
+        pokeName.innerHTML = 'Name: ???';
+        pokeType1.innerHTML = 'Type: ???';
+        pokeType2.innerHTML = "";
+        pokeType1.style.backgroundColor = 'unset';
+        pokeType2.style.backgroundColor = 'unset';
+        pokeDiv.style.cursor = 'default';
+      }
+
+      console.log(team);
+    }
+
+    const removeFromSlot = (slotNum) => {
+      team.splice(slotNum, 1);
+
+      displayTeam();
+    }
+
+    const handleResponse = (e) => {
+      const xhr = e.target;
+      const obj = xhr.response && JSON.parse(xhr.response);
+      console.dir(obj);
+
+      if (obj.message) {
+        snackbar.innerHTML = obj.message;
+      } else if (xhr.status === 204) {
+        snackbar.innerHTML = "Updated team"
+      }
+
+      snackbar.style.marginLeft = `-${snackbar.offsetWidth / 2}px`;
+      snackbar.classList.add('show');
+      setTimeout(() => {
+        snackbar.classList.remove('show');
+      }, 3000);
+    }
+
+    const sendPost = (e) => {
+      e.preventDefault();
+
+      const form = e.target;
+      const action = form.getAttribute('action');
+      const method = 'post';
+
+      const userField = form.querySelector('#userField');
+      const teamNameField = form.querySelector('#teamNameField');
+      const teamJSON = JSON.stringify(team);
+
+      const formData = `user=${userField.value}&teamName=${teamNameField.value}&team=${teamJSON}`;
+
+      const xhr = new XMLHttpRequest();
+      xhr.onload = handleResponse;
+      xhr.open(method, action);
+      xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+      xhr.send(formData);
+
+      return false;
+    };
+
     const init = () => {
-      contentContainer = document.querySelector('.pure-g');
+      contentContainer = document.querySelector('#pokemon-selection');
       fetchPokemon();
-      // TODO: Set up event listeners on buttons
+      // On team slot click, reset to placeholder default
+      const teamSlots = document.querySelectorAll('.team-slot');
+      for (let i = 0; i < TEAM_SIZE; i++) {
+        teamSlots[i].onclick = (e) => {
+          removeFromSlot(i);
+        };
+      }
+
+      teamForm.onsubmit = sendPost;
+      // TODO: Make team members draggable/swappable
     }
 
     window.onload = init;
@@ -148,9 +309,57 @@
     </ul>
   </nav>
 
-  <div class="pure-g container">
+  <section id='team-builder' class='pure-g'>
+    <div id="team-slot-1" class='team-slot pure-u-1-8'>
+      <img src="team-placeholder.jpg" alt="team 1 sprite" class="sprite">
+      <p class='poke-name'>Name: ???</p>
+      <span class='poke-type-1'>Type: ???</span>
+      <span class='poke-type-2'></span>
+    </div>
+    <div id="team-slot-2" class='team-slot pure-u-1-8'>
+      <img src="team-placeholder.jpg" alt="team 2 sprite" class="sprite">
+      <p class='poke-name'>Name: ???</p>
+      <span class='poke-type-1'>Type: ???</span>
+      <span class='poke-type-2'></span>
+    </div>
+    <div id="team-slot-3" class='team-slot pure-u-1-8'>
+      <img src="team-placeholder.jpg" alt="team 3 sprite" class="sprite">
+      <p class='poke-name'>Name: ???</p>
+      <span class='poke-type-1'>Type: ???</span>
+      <span class='poke-type-2'></span>
+    </div>
+    <div id="team-slot-4" class='team-slot pure-u-1-8'>
+      <img src="team-placeholder.jpg" alt="team 4 sprite" class="sprite">
+      <p class='poke-name'>Name: ???</p>
+      <span class='poke-type-1'>Type: ???</span>
+      <span class='poke-type-2'></span>
+    </div>
+    <div id="team-slot-5" class='team-slot pure-u-1-8'>
+      <img src="team-placeholder.jpg" alt="team 5 sprite" class="sprite">
+      <p class='poke-name'>Name: ???</p>
+      <span class='poke-type-1'>Type: ???</span>
+      <span class='poke-type-2'></span>
+    </div>
+    <div id="team-slot-6" class='team-slot pure-u-1-8'>
+      <img src="team-placeholder.jpg" alt="team 6 sprite" class="sprite">
+      <p class='poke-name'>Name: ???</p>
+      <span class='poke-type-1'>Type: ???</span>
+      <span class='poke-type-2'></span>
+    </div>
+    <form id='teamForm' class='pure-form pure-u-1-4' action="/addTeam" method="post">
+      <fieldset>
+        <input type="text" placeholder="Username" id='userField'>
+        <input type="text" placeholder="Team Name" id='teamNameField'>
+        <button class='pure-button pure-button-primary'>Save Team</button>
+      </fieldset>
+      <span id='response'></span>
+    </form>
+  </section>
 
-  </div>
+  <section id='pokemon-selection' class="pure-g"></section>
+
+  <!-- The actual snackbar -->
+  <div id="snackbar">Some text some message..</div>
 </body>
 
 </html>

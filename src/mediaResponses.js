@@ -1,11 +1,11 @@
 const fs = require('fs');
 const path = require('path');
 
-const loadPng = (request, response, relPath) => {
+const loadImage = (request, response, imageTpe, relPath) => {
   const file = path.resolve(__dirname, relPath);
   const stream = fs.createReadStream(file);
 
-  response.writeHead(200, { 'Content-Type': 'image/png' });
+  response.writeHead(200, { 'Content-Type': imageTpe });
 
   stream.on('open', () => {
     stream.pipe(response);
@@ -17,9 +17,14 @@ const loadPng = (request, response, relPath) => {
 };
 
 const getPikachu = (request, response) => {
-  loadPng(request, response, '../client/sleeping-pikachu.png');
+  loadImage(request, response, 'image/png', '../client/sleeping-pikachu.png');
+};
+
+const getPlaceholder = (request, response) => {
+  loadImage(request, response, 'image/jpeg', '../client/team-placeholder.jpg');
 };
 
 module.exports = {
   getPikachu,
+  getPlaceholder,
 };

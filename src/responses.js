@@ -120,7 +120,66 @@ const getRandomJokesResponse = (request, response, params, acceptedTypes, httpMe
   return respond(request, response, content, acceptedTypes);
 };
 
+// store teams
+const teams = {};
+
+const respondJSON = (request, response, status, object) => {
+  response.writeHead(status, { 'Content-Type': 'application/json' });
+  response.write(JSON.stringify(object));
+  response.end();
+};
+
+const respondJSONMeta = (request, response, status) => {
+  response.writeHead(status, { 'Content-Type': 'application/json' });
+  response.end();
+};
+
+const getTeams = (request, response) => {
+  const responseJSON = {
+    teams,
+  };
+
+  respondJSON(request, response, 200, responseJSON);
+};
+
+// add team and it's associated data
+const addTeam = (request, response, data) => {
+  const responseJSON = {
+    message: 'Username, Team Name, and at least one Pokemon must be in your team.',
+  };
+
+  const team = JSON.parse(data.team);
+
+  console.log(team);
+
+  if (!data.user || !data.teamName || team.length === 0) {
+    responseJSON.id = 'missingParams';
+    return respondJSON(request, response, 400, responseJSON);
+  }
+
+  let responseCode = 201;
+
+  if (teams[data.user]) {
+    responseCode = 204;
+  } else {
+    teams[data.user] = {};
+  }
+
+  teams[data.user].user = data.user;
+  teams[data.user].teamName = data.teamName;
+  teams[data.user].team = team;
+
+  if (responseCode === 201) {
+    responseJSON.message = 'New team sucessfully added!';
+    return respondJSON(request, response, responseCode, responseJSON);
+  }
+
+  return respondJSONMeta(request, response, responseCode);
+};
+
 module.exports = {
   getRandomJokeResponse,
   getRandomJokesResponse,
+  addTeam,
+  getTeams,
 };
