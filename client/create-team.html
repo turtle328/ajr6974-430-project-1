@@ -96,7 +96,7 @@
     const pokeDataList = [];
     const team = [];
     // for some reason this URL needs a slash added to it, even though all the other ones work fine without it?
-    const glitchyUrl = 'https://pokeapi.co/api/v2/pokemon/260/'
+    const glitchyUrls = ['https://pokeapi.co/api/v2/pokemon/178/', 'https://pokeapi.co/api/v2/pokemon/260/']
     // pokemon type colors in hex
     const typeColors = {
       "normal": '#A8A77A',
@@ -151,7 +151,7 @@
 
     const fetchPokemonData = (poke) => {
       // remove the '/' at the end of the url
-      const url = poke.url !== glitchyUrl ? poke.url.slice(0, -1) : poke.url;
+      const url = !glitchyUrls.includes(poke.url) ? poke.url.slice(0, -1) : poke.url;
 
       fetch(url)
         .then(response => response.json())

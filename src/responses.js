@@ -145,7 +145,7 @@ const getTeams = (request, response) => {
 // add team and it's associated data
 const addTeam = (request, response, data) => {
   const responseJSON = {
-    message: 'Username, Team Name, and at least one Pokemon must be in your team.',
+    message: 'Missing parameters: Username, Team Name, and at least one Pokemon must be in your team.',
   };
 
   const team = JSON.parse(data.team);
