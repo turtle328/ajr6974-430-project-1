@@ -93,10 +93,10 @@
     const TEAM_SIZE = 6;
 
     let contentContainer;
+    // glitchy URLs that don't seem to work without a '/' in front of it for whatever reason
+    const glitchyUrls = ['https://pokeapi.co/api/v2/pokemon/178/'];
     const pokeDataList = [];
     const team = [];
-    // for some reason this URL needs a slash added to it, even though all the other ones work fine without it?
-    const glitchyUrls = ['https://pokeapi.co/api/v2/pokemon/178/', 'https://pokeapi.co/api/v2/pokemon/260/']
     // pokemon type colors in hex
     const typeColors = {
       "normal": '#A8A77A',
@@ -153,15 +153,33 @@
       // remove the '/' at the end of the url
       const url = !glitchyUrls.includes(poke.url) ? poke.url.slice(0, -1) : poke.url;
 
-      fetch(url)
-        .then(response => response.json())
-        .then(pokeData => {
-          pokeDataList.push(pokeData);
-          displayPokemon(pokeData);
-          if (pokeDataList.length === COUNT) {
-            pokeDataList.sort((a, b) => { return a.id - b.id; })
-          }
-        }).catch(err => console.log(err));
+      const fetchRetry = (url, retries = 3) => {
+        return fetch(url)
+          .then(response => {
+            if (response.ok) return response.json();
+
+            // retry with the '/' added at the end
+            if (retries > 0) {
+              const newUrl = url + '/';
+              console.log("Retrying with new URL: " + newUrl);
+              return fetchRetry(newUrl);
+            }
+            else {
+              console.log("Max retries failed, failed to get resourece from: " + url);
+              throw new Error(response)
+            };
+          })
+          .then(pokeData => {
+            if (pokeData === undefined) return;
+            pokeDataList.push(pokeData);
+            displayPokemon(pokeData);
+            if (pokeDataList.length === COUNT) {
+              pokeDataList.sort((a, b) => { return a.id - b.id; })
+            }
+          })
+          .catch(err => console.log(err));
+      }
+      fetchRetry(url);
     }
 
     const getTypesList = (pokeData) => {
