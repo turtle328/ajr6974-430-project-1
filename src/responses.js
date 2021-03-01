@@ -150,8 +150,6 @@ const addTeam = (request, response, data) => {
 
   const team = JSON.parse(data.team);
 
-  console.log(team);
-
   if (!data.user || !data.teamName || team.length === 0) {
     responseJSON.id = 'missingParams';
     return respondJSON(request, response, 400, responseJSON);

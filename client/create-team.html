@@ -11,13 +11,8 @@
   <link rel="stylesheet" href="default-styles.css">
 
   <style>
-    form {
-      display: flex;
-      align-self: center;
-    }
-
     button {
-      margin-top: 5px;
+      margin-top: 0.5em;
     }
 
     img {
@@ -25,10 +20,11 @@
     }
 
     img.sprite {
-      max-height: 80px;
+      max-height: 100px;
     }
 
-    #response {
+    #response,
+    label {
       color: white;
     }
 
@@ -37,11 +33,11 @@
     }
 
     #team-builder {
-      padding: 1em 0;
       background-color: rgba(0, 0, 0, 0.5);
       position: sticky;
       top: 0;
       z-index: 1;
+      padding-top: 10px;
     }
 
     .pokeName {
@@ -55,6 +51,8 @@
     .poke-name {
       text-transform: capitalize;
       color: white;
+      margin: 0;
+      margin-bottom: 10px;
     }
 
     .poke-type-1,
@@ -67,6 +65,7 @@
 
     .team-slot {
       text-align: center;
+      padding-bottom: 15px;
     }
 
     .pokeDiv {
@@ -82,16 +81,20 @@
     .pokeDiv:hover {
       transform: scale(1.1);
     }
+
+    #search-label {
+      color: white;
+      margin: 0.25em 0;
+    }
   </style>
 
   <script>
-    const COUNT = 493;
+    const COUNT = 721;
     const TEAM_SIZE = 6;
 
     let contentContainer;
     const pokeDataList = [];
     const team = [];
-    console.log(team);
     // pokemon type colors in hex
     const typeColors = {
       "normal": '#A8A77A',
@@ -114,6 +117,24 @@
       "fairy": '#D685AD',
     }
 
+    // Return an array of the selected opion values
+    // select is an HTML select element
+    // https://stackoverflow.com/a/5867262/7838349
+    const getSelectValues = (select) => {
+      var result = [];
+      var options = select && select.options;
+      var opt;
+
+      for (var i = 0, iLen = options.length; i < iLen; i++) {
+        opt = options[i];
+
+        if (opt.selected) {
+          result.push(opt.value || opt.text);
+        }
+      }
+      return result;
+    }
+
     // use the pokeapi to get the first 151 pokemon
     const fetchPokemon = () => {
       const url = `https://pokeapi.co/api/v2/pokemon?limit=${COUNT}`;
@@ -133,20 +154,31 @@
         .then(pokeData => {
           pokeDataList.push(pokeData);
           displayPokemon(pokeData);
+          if (pokeDataList.length === COUNT) {
+            pokeDataList.sort((a, b) => { return a.id - b.id; })
+          }
         });
     }
 
-    const displayPokemon = (pokeData) => {
+    const getTypesList = (pokeData) => {
       const types = [];
+
+      for (const type of pokeData.types) {
+        types.push(type.type.name);
+      }
+
+      return types;
+    }
+
+    const displayPokemon = (pokeData) => {
+      const types = getTypesList(pokeData);
       const pokeContainer = document.createElement('div');
       const pokeDiv = document.createElement('div');
       const pokeName = document.createElement('p');
       const pokeSprite = document.createElement('img');
 
       pokeName.innerHTML = pokeData.name;
-      for (const type of pokeData.types) {
-        types.push(type.type.name);
-      }
+
       pokeSprite.src = pokeData.sprites.other['official-artwork'].front_default;
       pokeSprite.alt = `sprite of ${pokeData.name}`;
 
@@ -173,6 +205,45 @@
 
       pokeContainer.appendChild(pokeDiv)
       contentContainer.appendChild(pokeContainer);
+    }
+
+    const displayPokemonFromList = (list) => {
+      contentContainer.innerHTML = "";
+      for (const pokeData of list) {
+        const types = getTypesList(pokeData);
+        const pokeContainer = document.createElement('div');
+        const pokeDiv = document.createElement('div');
+        const pokeName = document.createElement('p');
+        const pokeSprite = document.createElement('img');
+
+        pokeName.innerHTML = pokeData.name;
+
+        pokeSprite.src = pokeData.sprites.other['official-artwork'].front_default;
+        pokeSprite.alt = `sprite of ${pokeData.name}`;
+
+        if (types.length === 1) {
+          pokeDiv.style.backgroundColor = typeColors[types[0]];
+        } else {
+          pokeDiv.style.background = `linear-gradient(90deg, ${typeColors[types[0]]} 50%, ${typeColors[types[1]]} 50%)`;
+        }
+
+        pokeDiv.appendChild(pokeSprite);
+        pokeDiv.appendChild(pokeName);
+        pokeContainer.classList.add('pure-u-1-2', 'pure-u-md-1-3', 'pure-u-lg-1-5');
+        pokeDiv.classList.add('pokeDiv');
+        pokeName.classList.add('pokeName');
+
+        pokeDiv.onclick = (e) => {
+          const data = {
+            name: pokeName.innerHTML,
+            types,
+            sprite: pokeSprite.src,
+          };
+          addToTeam(data);
+        }
+        pokeContainer.appendChild(pokeDiv)
+        contentContainer.appendChild(pokeContainer);
+      }
     }
 
     const addToTeam = (pokeData) => {
@@ -218,13 +289,10 @@
         pokeType2.style.backgroundColor = 'unset';
         pokeDiv.style.cursor = 'default';
       }
-
-      console.log(team);
     }
 
     const removeFromSlot = (slotNum) => {
       team.splice(slotNum, 1);
-
       displayTeam();
     }
 
@@ -268,6 +336,52 @@
       return false;
     };
 
+    const search = (e) => {
+      e.preventDefault();
+
+      // new filtered list
+      let filteredList = [];
+      // selected types
+      const selectedTypes = getSelectValues(typeSelect);
+      // selected search option
+      const searchOption = document.querySelector('input[name="searchOption"]:checked').value;
+
+      // if selected values contains 'any' or is unselected, don't filter
+      if (selectedTypes.length === 0 || selectedTypes.includes('any')) {
+        return displayPokemonFromList(pokeDataList);
+      }
+      // if AND
+      else if (searchOption === 'and') {
+        // if more than 2 types are selected, the list is guaranteed to be empty as no pokemon has three types
+        if (selectedTypes.length > 2) {
+          contentContainer.innerHTML = "";
+          return;
+        }
+        filteredList = pokeDataList.filter(pokeData => {
+          // get types array
+          const types = getTypesList(pokeData);
+          let typesMatch = true;
+
+          for (let i = 0; i < selectedTypes.length; i++) {
+            if (!types.includes(selectedTypes[i])) {
+              return false;
+            }
+          }
+          return true;
+        })
+      }
+      // if OR
+      else if (searchOption === 'or') {
+
+      }
+      // else (NOT)
+      else {
+
+      }
+
+      return displayPokemonFromList(filteredList);
+    }
+
     const init = () => {
       contentContainer = document.querySelector('#pokemon-selection');
       fetchPokemon();
@@ -280,7 +394,8 @@
       }
 
       teamForm.onsubmit = sendPost;
-      // TODO: Make team members draggable/swappable
+      searchForm.onsubmit = search;
+      // TODO: Make team members draggable/swappable?
     }
 
     window.onload = init;
@@ -310,49 +425,95 @@
   </nav>
 
   <section id='team-builder' class='pure-g'>
-    <div id="team-slot-1" class='team-slot pure-u-1-8'>
+    <div id="team-slot-1" class='team-slot pure-u-1-5'>
       <img src="team-placeholder.jpg" alt="team 1 sprite" class="sprite">
       <p class='poke-name'>Name: ???</p>
       <span class='poke-type-1'>Type: ???</span>
       <span class='poke-type-2'></span>
     </div>
-    <div id="team-slot-2" class='team-slot pure-u-1-8'>
+    <div id="team-slot-2" class='team-slot pure-u-1-5'>
       <img src="team-placeholder.jpg" alt="team 2 sprite" class="sprite">
       <p class='poke-name'>Name: ???</p>
       <span class='poke-type-1'>Type: ???</span>
       <span class='poke-type-2'></span>
     </div>
-    <div id="team-slot-3" class='team-slot pure-u-1-8'>
+    <div id="team-slot-3" class='team-slot pure-u-1-5'>
       <img src="team-placeholder.jpg" alt="team 3 sprite" class="sprite">
       <p class='poke-name'>Name: ???</p>
       <span class='poke-type-1'>Type: ???</span>
       <span class='poke-type-2'></span>
     </div>
-    <div id="team-slot-4" class='team-slot pure-u-1-8'>
+    <form id='searchForm' class="pure-u-2-5 pure-form pure-form-stacked">
+      <fieldset>
+        <div class="pure-u-1-4">
+          <label for="typeSelect">Type</label>
+          <select multiple id="typeSelect">
+            <option value="any">Any</option>
+            <option value="normal">Normal</option>
+            <option value="fighting">Fighting</option>
+            <option value="flying">Flying</option>
+            <option value="poison">Poison</option>
+            <option value="ground">Ground</option>
+            <option value="rock">Rock</option>
+            <option value="bug">Bug</option>
+            <option value="ghost">Ghost</option>
+            <option value="steel">Steel</option>
+            <option value="fire">Fire</option>
+            <option value="water">Water</option>
+            <option value="grass">Grass</option>
+            <option value="electric">Electric</option>
+            <option value="psychic">Psychic</option>
+            <option value="ice">Ice</option>
+            <option value="dragon">Dragon</option>
+            <option value="dark">Dark</option>
+            <option value="fairy">Fairy</option>
+          </select>
+        </div>
+        <div class="pure-u-1-4">
+          <p id='search-label'>Search Options</p>
+          <label for="andRadio"><input type="radio" name="searchOption" id="andRadio" value="and" checked> AND</label>
+          <label for="orRadio"><input type="radio" name="searchOption" id="orRadio" value="or"> OR</label>
+          <label for="notRadio"><input type="radio" name="searchOption" id="notRadio" value='not'> NOT</label>
+        </div>
+        <div class="pure-u-1-4">
+          <label for="searchBar">Search Pokemon</label>
+          <input type="search" id="searchBar" placeholder="Enter a pokemon">
+          <button class='pure-button pure-button-primary' id='searchBtn'>Search</button>
+        </div>
+      </fieldset>
+    </form>
+    <div id="team-slot-4" class='team-slot pure-u-1-5'>
       <img src="team-placeholder.jpg" alt="team 4 sprite" class="sprite">
       <p class='poke-name'>Name: ???</p>
       <span class='poke-type-1'>Type: ???</span>
       <span class='poke-type-2'></span>
     </div>
-    <div id="team-slot-5" class='team-slot pure-u-1-8'>
+    <div id="team-slot-5" class='team-slot pure-u-1-5'>
       <img src="team-placeholder.jpg" alt="team 5 sprite" class="sprite">
       <p class='poke-name'>Name: ???</p>
       <span class='poke-type-1'>Type: ???</span>
       <span class='poke-type-2'></span>
     </div>
-    <div id="team-slot-6" class='team-slot pure-u-1-8'>
+    <div id="team-slot-6" class='team-slot pure-u-1-5'>
       <img src="team-placeholder.jpg" alt="team 6 sprite" class="sprite">
       <p class='poke-name'>Name: ???</p>
       <span class='poke-type-1'>Type: ???</span>
       <span class='poke-type-2'></span>
     </div>
-    <form id='teamForm' class='pure-form pure-u-1-4' action="/addTeam" method="post">
+    <form id='teamForm' class='pure-form pure-form-stacked pure-u-2-5' action="/addTeam" method="post">
       <fieldset>
-        <input type="text" placeholder="Username" id='userField'>
-        <input type="text" placeholder="Team Name" id='teamNameField'>
-        <button class='pure-button pure-button-primary'>Save Team</button>
+        <div class="pure-u-1-3">
+          <label for="userField">Username</label>
+          <input type="text" placeholder="Username" id='userField' class="pure-u-23-24">
+        </div>
+        <div class="pure-u-1-3">
+          <label for="teamNameField">Team Name</label>
+          <input type="text" placeholder="Team Name" id='teamNameField' class="pure-u-23-24">
+        </div>
+        <div class="pure-u-1-3">
+          <button class='pure-button pure-button-primary'>Save Team</button>
+        </div>
       </fieldset>
-      <span id='response'></span>
     </form>
   </section>
 
