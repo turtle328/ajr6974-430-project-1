@@ -95,6 +95,8 @@
     let contentContainer;
     const pokeDataList = [];
     const team = [];
+    // for some reason this URL needs a slash added to it, even though all the other ones work fine without it?
+    const glitchyUrl = 'https://pokeapi.co/api/v2/pokemon/260/'
     // pokemon type colors in hex
     const typeColors = {
       "normal": '#A8A77A',
@@ -148,7 +150,9 @@
     }
 
     const fetchPokemonData = (poke) => {
-      let url = poke.url;
+      // remove the '/' at the end of the url
+      const url = poke.url !== glitchyUrl ? poke.url.slice(0, -1) : poke.url;
+
       fetch(url)
         .then(response => response.json())
         .then(pokeData => {
@@ -157,7 +161,7 @@
           if (pokeDataList.length === COUNT) {
             pokeDataList.sort((a, b) => { return a.id - b.id; })
           }
-        });
+        }).catch(err => console.log(err));
     }
 
     const getTypesList = (pokeData) => {
@@ -340,43 +344,72 @@
       e.preventDefault();
 
       // new filtered list
-      let filteredList = [];
+      let filteredList = [...pokeDataList];
       // selected types
       const selectedTypes = getSelectValues(typeSelect);
       // selected search option
       const searchOption = document.querySelector('input[name="searchOption"]:checked').value;
 
-      // if selected values contains 'any' or is unselected, don't filter
-      if (selectedTypes.length === 0 || selectedTypes.includes('any')) {
-        return displayPokemonFromList(pokeDataList);
-      }
-      // if AND
-      else if (searchOption === 'and') {
-        // if more than 2 types are selected, the list is guaranteed to be empty as no pokemon has three types
-        if (selectedTypes.length > 2) {
-          contentContainer.innerHTML = "";
-          return;
-        }
-        filteredList = pokeDataList.filter(pokeData => {
-          // get types array
-          const types = getTypesList(pokeData);
-          let typesMatch = true;
+      // if selected values contains 'any' or is unselected, don't filter by type
+      if (selectedTypes.length > 0 && !selectedTypes.includes('any')) {
+        // if AND
+        if (searchOption === 'and') {
+          filteredList = pokeDataList.filter(pokeData => {
+            // get types array
+            const types = getTypesList(pokeData);
 
-          for (let i = 0; i < selectedTypes.length; i++) {
-            if (!types.includes(selectedTypes[i])) {
-              return false;
+            for (const selectedType of selectedTypes) {
+              if (!types.includes(selectedType)) {
+                return false;
+              }
             }
-          }
-          return true;
-        })
-      }
-      // if OR
-      else if (searchOption === 'or') {
+            return true;
+          })
+        }
+        // if OR
+        else if (searchOption === 'or') {
+          filteredList = pokeDataList.filter(pokeData => {
+            const types = getTypesList(pokeData);
 
-      }
-      // else (NOT)
-      else {
+            for (const selectedType of selectedTypes) {
+              if (types.includes(selectedType)) {
+                return true;
+              }
+            }
+            return false;
+          })
+        }
+        // if NOT
+        else if (searchOption === 'not') {
+          filteredList = pokeDataList.filter(pokeData => {
+            const types = getTypesList(pokeData);
 
+            for (const selectedType of selectedTypes) {
+              if (types.includes(selectedType)) {
+                return false;
+              }
+            }
+            return true;
+          })
+        }
+        // else (ONLY)
+        else {
+          filteredList = pokeDataList.filter(pokeData => {
+            const types = getTypesList(pokeData);
+
+            for (const selectedType of selectedTypes) {
+              if (types.includes(selectedType) && types.length === 1) {
+                return true;
+              }
+            }
+            return false;
+          })
+        }
+      }
+
+      if (searchBar.value.length > 0) {
+        const searchTerm = searchBar.value.toLowerCase();
+        filteredList = filteredList.filter(pokeData => pokeData.name.includes(searchTerm));
       }
 
       return displayPokemonFromList(filteredList);
@@ -474,6 +507,7 @@
           <label for="andRadio"><input type="radio" name="searchOption" id="andRadio" value="and" checked> AND</label>
           <label for="orRadio"><input type="radio" name="searchOption" id="orRadio" value="or"> OR</label>
           <label for="notRadio"><input type="radio" name="searchOption" id="notRadio" value='not'> NOT</label>
+          <label for="onlyRadio"><input type="radio" name="searchOption" id="onlyRadio" value='only'> ONLY</label>
         </div>
         <div class="pure-u-1-4">
           <label for="searchBar">Search Pokemon</label>
