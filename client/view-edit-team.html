@@ -9,6 +9,16 @@
   <link rel="stylesheet" href="https://unpkg.com/purecss@2.0.5/build/pure-min.css"
     integrity="sha384-LTIDeidl25h2dPxrB2Ekgc9c7sEC3CWGM6HeFmuDNUjX76Ert4Z4IY714dhZHPLd" crossorigin="anonymous">
   <link rel="stylesheet" href="default-styles.css">
+  <style>
+    form {
+      padding: 0 20%;
+    }
+
+    #search-btn, #edit-btn {
+      margin-top: 1.1em;
+      padding: 0.8em ;
+    }
+  </style>
 </head>
 
 <body>
@@ -33,7 +43,25 @@
     </ul>
   </nav>
 
-  <h1>View/Edit Team Placeholder</h1>
+  <section class="pure-g">
+    <h1 class='pure-u-1 center'>View/Edit Team</h1>
+    <form class="pure-form pure-form-stacked pure-u-1">
+      <legend>Find Team</legend>
+      <fieldset>
+        <div class="pure-u-1-4">
+          <label for="search-box">Username</label>
+          <input type="search" class='pure-u-23-24' id='search-box' placeholder="Search a user">
+        </div>
+        <div class="pure-u-1-8">
+          <button class='pure-button pure-button-primary pure-u-23-24' id='search-btn'>Submit</button>
+        </div>
+        <div class="pure-u-1-8">
+          <button class='pure-button pure-button-primary pure-u-23-24' id='edit-btn'>Edit Team</button>
+        </div>
+      </fieldset>
+    </form>
+  </section>
+
 </body>
 
 </html>
