@@ -2,6 +2,7 @@ const http = require('http');
 
 const htmlHandler = require('./htmlResponses.js');
 const cssHandler = require('./cssResponses.js');
+const jsHandler = require('./jsResponses.js');
 const jsonHandler = require('./responses.js');
 const mediaHandler = require('./mediaResponses.js');
 const postHandler = require('./postHandler.js');
@@ -22,6 +23,7 @@ const urlStruct = {
   '/team-placeholder.jpg': mediaHandler.getPlaceholder,
   '/addTeam': postHandler.addTeam,
   '/getTeams': jsonHandler.getTeams,
+  '/pokemon-shared.js': jsHandler.getPokemonScript,
   notFound: htmlHandler.get404Response,
 };
 

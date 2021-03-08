@@ -7,6 +7,10 @@
   padding: 0 2em;
 }
 
+.center {
+  text-align: center;
+}
+
 .pure-menu-link:hover {
   background-color: red;
   color: white;

@@ -3,12 +3,244 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Random Teams</title>
   <link rel="stylesheet" href="https://unpkg.com/purecss@2.0.5/build/pure-min.css"
     integrity="sha384-LTIDeidl25h2dPxrB2Ekgc9c7sEC3CWGM6HeFmuDNUjX76Ert4Z4IY714dhZHPLd" crossorigin="anonymous">
   <link rel="stylesheet" href="default-styles.css">
+  <style>
+    form {
+      padding: 0 23%;
+      padding-bottom: 0.5em;
+    }
+
+    .radio-label {
+      padding-right: 1em;
+    }
+
+    .poke-team {
+      text-align: center;
+      padding: 0 20%;
+    }
+
+    .poke-slot {
+      position: relative;
+      border: solid black 1px;
+      margin-bottom: 5px;
+    }
+
+    .fa-unlock,
+    .fa-lock {
+      font-size: 2em;
+      position: absolute;
+      right: 5px;
+      top: 5px;
+      cursor: pointer;
+    }
+
+    .poke-name {
+      margin: 0;
+      padding: 1em 0;
+      background-color: black;
+      color: white;
+      text-transform: capitalize;
+    }
+
+    #save-btn {
+      margin-top: 1.2em;
+      padding: 0.8em 0;
+    }
+
+    #generate-btn {
+      margin-left: 1em;
+    }
+  </style>
+  <script src="https://kit.fontawesome.com/182fd99499.js" crossorigin="anonymous"></script>
+  <script src="pokemon-shared.js"></script>
+  <script>
+    const MAX_POKEMON = 898;
+    const MAX_EVOLVED = 475;
+    const MISSING_CHAINS = [210, 222, 225, 226, 227, 231, 238, 251];
+    const MAX_TYPES = 18;
+    const baseUrl = 'https://pokeapi.co/api/v2/'
+    const team = [];
+    let generationType = 'random-any';
+
+    const getRandBetween = (min, max) => {
+      return Math.floor(Math.random() * max - min + 1) + min;
+    }
+
+    // https://stackoverflow.com/a/7331186/7838349
+    const getIdFromSpeciesUrl = (url) => {
+      const match = url.match(/pokemon-species\/(\d+)/)
+      return match[1];
+    }
+
+    const sendPost = (e) => {
+      e.preventDefault();
+
+      const form = e.target;
+      const action = form.getAttribute('action');
+      const method = 'post';
+
+      const userField = form.querySelector('#user');
+      const teamNameField = form.querySelector('#team-name');
+      const slots = document.querySelectorAll('.poke-slot');
+      const team = [];
+
+      for (const slot of slots) {
+        const pokeData = slot.pokeData;
+        if (pokeData !== undefined) {
+          team.push(pokeData);
+        }
+      }
+
+      const teamJSON = JSON.stringify(team);
+
+      const formData = `user=${userField.value}&teamName=${teamNameField.value}&team=${teamJSON}`;
+
+      const xhr = new XMLHttpRequest();
+      xhr.onload = handleResponse;
+      xhr.open(method, action);
+      xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+      xhr.send(formData);
+
+      return false;
+    };
+
+    const fetchPokemonData = (url, div) => {
+      fetch(url)
+        .then(response => response.json())
+        .then(data => {
+          const name = data.name;
+          const types = getTypesList(data);
+          const sprite = getSprite(data);
+          const pokeData = {
+            name, types, sprite
+          }
+
+          const img = div.querySelector('img');
+          const pName = div.querySelector('.poke-name');
+
+          pName.innerHTML = name;
+          img.src = sprite;
+          pokemonBackgroundType(div, types);
+          div.pokeData = pokeData;
+        })
+    }
+
+    const fetchPokemonDataId = (id, div) => {
+      const url = baseUrl + 'pokemon/' + id + '/';
+      fetchPokemonData(url, div);
+    }
+
+    const generateAnyTeam = (unlockedSlots) => {
+      for (const slot of unlockedSlots) {
+        const slotDiv = slot.parentElement;
+        const randId = getRandBetween(1, MAX_POKEMON);
+        fetchPokemonDataId(randId, slotDiv);
+      }
+    }
+
+    const generateFeoTeam = (unlockedSlots) => {
+      for (const slot of unlockedSlots) {
+        const slotDiv = slot.parentElement;
+        let randId = getRandBetween(1, MAX_EVOLVED);
+        while (MISSING_CHAINS.includes(randId)) {
+          randId = getRandBetween(1, MAX_EVOLVED);
+        }
+        const url = baseUrl + 'evolution-chain/' + randId + '/';
+        fetch(url)
+          .then(response => response.json())
+          .then(data => {
+            const chain = data.chain;
+            let id = getIdFromSpeciesUrl(chain.species.url);
+            let evolves_to = chain.evolves_to;
+            while (evolves_to.length > 0) {
+              const randNum = Math.floor(Math.random() * evolves_to.length);
+              id = getIdFromSpeciesUrl(evolves_to[randNum].species.url);
+              evolves_to = evolves_to[randNum].evolves_to;
+            }
+            fetchPokemonDataId(id, slotDiv);
+          })
+      }
+    }
+
+    const generateTypeTeam = (unlockedSlots) => {
+      const selectedType = document.querySelector('#type-select').value;
+      const url = baseUrl + 'type/' + selectedType;
+      fetch(url)
+        .then(response => response.json())
+        .then(data => {
+          const pokemon = data.pokemon;
+          for (const slot of unlockedSlots) {
+            const slotDiv = slot.parentElement;
+            const randIndex = Math.floor(Math.random() * pokemon.length);
+            const url = pokemon[randIndex].pokemon.url;
+            fetchPokemonData(url, slotDiv);
+          }
+        });
+    }
+
+    const generateTeam = (e) => {
+      e.preventDefault();
+      const unlockedSlots = document.querySelectorAll('.fa-unlock');
+
+      switch (generationType) {
+        case 'random-any':
+          generateAnyTeam(unlockedSlots);
+          break;
+        case 'random-feo':
+          generateFeoTeam(unlockedSlots);
+          break;
+        case 'random-type':
+          generateTypeTeam(unlockedSlots);
+          break;
+        default:
+          console.error("Generation type not selected");
+      }
+    }
+
+    const init = () => {
+      // set up lock functionality
+      const locks = document.querySelectorAll('.fa-unlock');
+
+      for (const lock of locks) {
+        lock.onclick = () => {
+          if (lock.classList.contains('fa-unlock')) {
+            lock.classList.replace('fa-unlock', 'fa-lock');
+          } else {
+            lock.classList.replace('fa-lock', 'fa-unlock');
+          }
+        }
+      }
+
+      // set up radio button functionality
+      const radioBtns = document.querySelectorAll('input[type=radio]');
+      for (const btn of radioBtns) {
+        btn.onchange = (e) => {
+          generationType = e.target.id;
+          const typeSelect = document.querySelector('#type-select');
+          if (generationType === 'random-type') {
+            typeSelect.removeAttribute('disabled');
+          } else {
+            typeSelect.setAttribute("disabled", "");
+          }
+        }
+      }
+
+      // set up generate functionality
+      const generateForm = document.querySelector('#generation-form');
+      generateForm.onsubmit = generateTeam;
+
+      // set up team save functionality
+      const saveForm = document.querySelector('#save-form');
+      saveForm.onsubmit = sendPost;
+    }
+
+    window.onload = init;
+  </script>
 </head>
 
 <body>
@@ -33,7 +265,94 @@
     </ul>
   </nav>
 
-  <h1>Random Team Placeholder</h1>
+  <section class="pure-g">
+    <h1 class="pure-u-1 center">
+      Random Team Generator
+    </h1>
+    <form class="pure-form pure-u-1" id='generation-form'>
+      <legend>Generation Options</legend>
+      <fieldset>
+        <label for="random-any" class='radio-label'>
+          <input type="radio" name="generation-option" id="random-any" aria-disabled="true" checked> Any</label>
+        <label for="random-feo" class='radio-label'>
+          <input type="radio" name="generation-option" id="random-feo" aria-disabled="true"> Fully Evolved Only</label>
+        <label for="random-type" class='radio-label'>
+          <input type="radio" name="generation-option" id="random-type" aria-disabled="true"> Type</label>
+        <select id="type-select" disabled>
+          <option value="normal">Normal</option>
+          <option value="fighting">Fighting</option>
+          <option value="flying">Flying</option>
+          <option value="poison">Poison</option>
+          <option value="ground">Ground</option>
+          <option value="rock">Rock</option>
+          <option value="bug">Bug</option>
+          <option value="ghost">Ghost</option>
+          <option value="steel">Steel</option>
+          <option value="fire">Fire</option>
+          <option value="water">Water</option>
+          <option value="grass">Grass</option>
+          <option value="electric">Electric</option>
+          <option value="psychic">Psychic</option>
+          <option value="ice">Ice</option>
+          <option value="dragon">Dragon</option>
+          <option value="dark">Dark</option>
+          <option value="fairy">Fairy</option>
+        </select>
+        <button class='pure-button pure-button-primary' id='generate-btn'>Generate</button>
+      </fieldset>
+    </form>
+    <form class="pure-form pure-form-stacked pure-u-1" id='save-form' action="/addTeam" method="post">
+      <legend>Save Team</legend>
+      <fieldset>
+        <div class="pure-u-2-5">
+          <label for="user">Username</label>
+          <input type="text" class='pure-u-23-24' id='user' required="" placeholder="TurboSlayer123">
+        </div>
+        <div class="pure-u-2-5">
+          <label for="team-name">Team Name</label>
+          <input type="text" class='pure-u-23-24' id='team-name' required="" placeholder="Team Renegade">
+        </div>
+        <div class="pure-u-1-6 button-container">
+          <button class='pure-button pure-button-primary pure-u-23-24' id='save-btn'>Save</button>
+        </div>
+      </fieldset>
+    </form>
+    <div class="pure-u-1">
+      <div class="poke-team">
+        <div class="poke-slot pure-u-7-24">
+          <i class="fas fa-unlock" title='Toggle lock'></i>
+          <img class='pure-img' src="team-placeholder.jpg" alt="pokemon sprite">
+          <p class='poke-name'>Pokemon Name</p>
+        </div>
+        <div class="poke-slot pure-u-7-24">
+          <i class="fas fa-unlock" title='Toggle lock'></i>
+          <img class='pure-img' src="team-placeholder.jpg" alt="pokemon sprite">
+          <p class='poke-name'>Pokemon Name</p>
+        </div>
+        <div class="poke-slot pure-u-7-24">
+          <i class="fas fa-unlock" title='Toggle lock'></i>
+          <img class='pure-img' src="team-placeholder.jpg" alt="pokemon sprite">
+          <p class='poke-name'>Pokemon Name</p>
+        </div>
+        <div class="poke-slot pure-u-7-24">
+          <i class="fas fa-unlock" title='Toggle lock'></i>
+          <img class='pure-img' src="team-placeholder.jpg" alt="pokemon sprite">
+          <p class='poke-name'>Pokemon Name</p>
+        </div>
+        <div class="poke-slot pure-u-7-24">
+          <i class="fas fa-unlock" title='Toggle lock'></i>
+          <img class='pure-img' src="team-placeholder.jpg" alt="pokemon sprite">
+          <p class='poke-name'>Pokemon Name</p>
+        </div>
+        <div class="poke-slot pure-u-7-24">
+          <i class="fas fa-unlock" title='Toggle lock'></i>
+          <img class='pure-img' src="team-placeholder.jpg" alt="pokemon sprite">
+          <p class='poke-name'>Pokemon Name</p>
+        </div>
+      </div>
+    </div>
+  </section>
+  <div id="snackbar">Some text some message..</div>
 </body>
 
 </html>
