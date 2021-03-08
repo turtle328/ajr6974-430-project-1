@@ -77,6 +77,11 @@
       return match[1];
     }
 
+    const getIdFromUrl = (url) => {
+      const match = url.match(/pokemon\/(\d+)/);
+      return match[1];
+    }
+
     const sendPost = (e) => {
       e.preventDefault();
 
@@ -176,9 +181,14 @@
           const pokemon = data.pokemon;
           for (const slot of unlockedSlots) {
             const slotDiv = slot.parentElement;
-            const randIndex = Math.floor(Math.random() * pokemon.length);
-            const url = pokemon[randIndex].pokemon.url;
-            fetchPokemonData(url, slotDiv);
+            let id;
+            let pokeUrl;
+            do {
+              let randIndex = Math.floor(Math.random() * pokemon.length);
+              pokeUrl = pokemon[randIndex].pokemon.url;
+              id = getIdFromUrl(pokeUrl);
+            } while (id > MAX_POKEMON);
+            fetchPokemonData(pokeUrl, slotDiv);
           }
         });
     }
