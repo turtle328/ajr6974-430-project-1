@@ -89,6 +89,7 @@
   </style>
   <script src="pokemon-shared.js"></script>
   <script>
+    'use strict'
     const COUNT = 721;
     const TEAM_SIZE = 6;
 
@@ -380,6 +381,25 @@
     const init = () => {
       contentContainer = document.querySelector('#pokemon-selection');
       fetchPokemon();
+      
+      let userData = sessionStorage.getItem('userData');
+      if (userData !== null) {
+        // clear session storage now that data has been retrieved
+        sessionStorage.clear();
+        userData = JSON.parse(userData);
+
+        const userTeam = userData.team;
+        const username = userData.user;
+        const teamName = userData.teamName;
+
+        userField.value = username;
+        teamNameField.value = teamName;
+
+        for (const poke of userTeam) {
+          addToTeam(poke);
+        }
+      }
+
       // On team slot click, reset to placeholder default
       const teamSlots = document.querySelectorAll('.team-slot');
       for (let i = 0; i < TEAM_SIZE; i++) {

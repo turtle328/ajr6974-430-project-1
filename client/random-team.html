@@ -10,8 +10,16 @@
     integrity="sha384-LTIDeidl25h2dPxrB2Ekgc9c7sEC3CWGM6HeFmuDNUjX76Ert4Z4IY714dhZHPLd" crossorigin="anonymous">
   <link rel="stylesheet" href="default-styles.css">
   <style>
+    section {
+      padding: 0 20%;
+    }
+
+    img {
+      flex: 100%;
+      flex-basis: 200%;
+    }
+
     form {
-      padding: 0 23%;
       padding-bottom: 0.5em;
     }
 
@@ -19,22 +27,11 @@
       padding-right: 1em;
     }
 
-    .poke-team {
-      text-align: center;
-      padding: 0 20%;
-    }
-
-    .poke-slot {
-      position: relative;
-      border: solid black 1px;
-      margin-bottom: 5px;
-    }
-
     .fa-unlock,
     .fa-lock {
       font-size: 2em;
       position: absolute;
-      right: 5px;
+      right: 10px;
       top: 5px;
       cursor: pointer;
     }
@@ -59,6 +56,7 @@
   <script src="https://kit.fontawesome.com/182fd99499.js" crossorigin="anonymous"></script>
   <script src="pokemon-shared.js"></script>
   <script>
+    'use strict'
     const MAX_POKEMON = 898;
     const MAX_EVOLVED = 475;
     const MISSING_CHAINS = [210, 222, 225, 226, 227, 231, 238, 251];
@@ -327,38 +325,36 @@
         </div>
       </fieldset>
     </form>
-    <div class="pure-u-1">
-      <div class="poke-team">
-        <div class="poke-slot pure-u-7-24">
-          <i class="fas fa-unlock" title='Toggle lock'></i>
-          <img class='pure-img' src="team-placeholder.jpg" alt="pokemon sprite">
-          <p class='poke-name'>Pokemon Name</p>
-        </div>
-        <div class="poke-slot pure-u-7-24">
-          <i class="fas fa-unlock" title='Toggle lock'></i>
-          <img class='pure-img' src="team-placeholder.jpg" alt="pokemon sprite">
-          <p class='poke-name'>Pokemon Name</p>
-        </div>
-        <div class="poke-slot pure-u-7-24">
-          <i class="fas fa-unlock" title='Toggle lock'></i>
-          <img class='pure-img' src="team-placeholder.jpg" alt="pokemon sprite">
-          <p class='poke-name'>Pokemon Name</p>
-        </div>
-        <div class="poke-slot pure-u-7-24">
-          <i class="fas fa-unlock" title='Toggle lock'></i>
-          <img class='pure-img' src="team-placeholder.jpg" alt="pokemon sprite">
-          <p class='poke-name'>Pokemon Name</p>
-        </div>
-        <div class="poke-slot pure-u-7-24">
-          <i class="fas fa-unlock" title='Toggle lock'></i>
-          <img class='pure-img' src="team-placeholder.jpg" alt="pokemon sprite">
-          <p class='poke-name'>Pokemon Name</p>
-        </div>
-        <div class="poke-slot pure-u-7-24">
-          <i class="fas fa-unlock" title='Toggle lock'></i>
-          <img class='pure-img' src="team-placeholder.jpg" alt="pokemon sprite">
-          <p class='poke-name'>Pokemon Name</p>
-        </div>
+    <div class="poke-team">
+      <div class="poke-slot">
+        <i class="fas fa-unlock" title='Toggle lock'></i>
+        <img class='pure-img' src="team-placeholder.jpg" alt="pokemon sprite">
+        <p class='poke-name pure-u-1 center'>Pokemon Name</p>
+      </div>
+      <div class="poke-slot">
+        <i class="fas fa-unlock" title='Toggle lock'></i>
+        <img class='pure-img' src="team-placeholder.jpg" alt="pokemon sprite">
+        <p class='poke-name pure-u-1 center'>Pokemon Name</p>
+      </div>
+      <div class="poke-slot">
+        <i class="fas fa-unlock" title='Toggle lock'></i>
+        <img class='pure-img' src="team-placeholder.jpg" alt="pokemon sprite">
+        <p class='poke-name pure-u-1 center'>Pokemon Name</p>
+      </div>
+      <div class="poke-slot">
+        <i class="fas fa-unlock" title='Toggle lock'></i>
+        <img class='pure-img' src="team-placeholder.jpg" alt="pokemon sprite">
+        <p class='poke-name pure-u-1 center'>Pokemon Name</p>
+      </div>
+      <div class="poke-slot">
+        <i class="fas fa-unlock" title='Toggle lock'></i>
+        <img class='pure-img' src="team-placeholder.jpg" alt="pokemon sprite">
+        <p class='poke-name pure-u-1 center'>Pokemon Name</p>
+      </div>
+      <div class="poke-slot">
+        <i class="fas fa-unlock" title='Toggle lock'></i>
+        <img class='pure-img' src="team-placeholder.jpg" alt="pokemon sprite">
+        <p class='poke-name pure-u-1 center'>Pokemon Name</p>
       </div>
     </div>
   </section>

@@ -1,3 +1,4 @@
+'use strict'
 // pokemon type colors in hex
 const typeColors = {
   normal: '#A8A77A',
@@ -20,7 +21,9 @@ const typeColors = {
   fairy: '#D685AD',
 };
 
-const getSprite = (data) => data.sprites.other['official-artwork'].front_default;
+const isEmpty = obj => Object.keys(obj).length === 0;
+
+const getSprite = data => data.sprites.other['official-artwork'].front_default;
 
 const getTypesList = (data) => {
   const types = [];
@@ -53,14 +56,17 @@ const handleResponse = (e) => {
   console.dir(obj);
 
   if (obj.message) {
-    snackbar.innerHTML = obj.message;
+    showSnackbar(obj.message);
   } else if (xhr.status === 204) {
-    snackbar.innerHTML = 'Updated team';
+    showSnackbar('Updated team');
   }
+};
 
+const showSnackbar = (text) => {
+  snackbar.innerHTML = text;
   snackbar.style.marginLeft = `-${snackbar.offsetWidth / 2}px`;
   snackbar.classList.add('show');
   setTimeout(() => {
     snackbar.classList.remove('show');
   }, 3000);
-};
+}

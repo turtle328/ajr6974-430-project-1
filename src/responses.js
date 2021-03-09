@@ -134,12 +134,15 @@ const respondJSONMeta = (request, response, status) => {
   response.end();
 };
 
-const getTeams = (request, response) => {
-  const responseJSON = {
-    teams,
-  };
+const getTeam = (request, response, params) => {
+  const user = params.get("user");
+  const team = teams[user] ?? 'no-user-found';
 
-  respondJSON(request, response, 200, responseJSON);
+  respondJSON(request, response, 200, team);
+};
+
+const getTeams = (request, response) => {
+  respondJSON(request, response, 200, teams);
 };
 
 // add team and it's associated data
@@ -180,4 +183,5 @@ module.exports = {
   getRandomJokesResponse,
   addTeam,
   getTeams,
+  getTeam,
 };

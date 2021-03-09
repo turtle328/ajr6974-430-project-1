@@ -10,15 +10,88 @@
     integrity="sha384-LTIDeidl25h2dPxrB2Ekgc9c7sEC3CWGM6HeFmuDNUjX76Ert4Z4IY714dhZHPLd" crossorigin="anonymous">
   <link rel="stylesheet" href="default-styles.css">
   <style>
-    form {
+    section {
       padding: 0 20%;
     }
 
-    #search-btn, #edit-btn {
+    .poke-name {
+      margin: 0;
+      padding: 1em 0;
+      background-color: black;
+      color: white;
+      text-transform: capitalize;
+    }
+
+    #search-btn,
+    #edit-btn {
       margin-top: 1.1em;
-      padding: 0.8em ;
+      padding: 0.8em;
+      max-width: 200px;
     }
   </style>
+  <script src="/pokemon-shared.js"></script>
+  <script>
+    'use strict'
+    let userData;
+
+    const formSubmit = (e) => {
+      e.preventDefault();
+
+      const btn = e.submitter.id;
+
+      // search and find team off the server
+      if (btn === 'search-btn') {
+        const username = document.querySelector('#search-box').value;
+        const url = `/getTeam?user=${username}`;
+        fetch(url)
+          .then(response => response.json())
+          .then(data => {
+            if (data === 'no-user-found') {
+              showSnackbar('No user found');
+              return;
+            }
+
+            userData = data;
+            const team = data.team;
+
+            const teamSlots = document.querySelectorAll('.poke-slot');
+            const teamNameHeader = document.querySelector('#team-name');
+
+            teamNameHeader.innerHTML = `${data.teamName} by ${data.user}`;
+
+            for (let i = 0; i < team.length; i++) {
+              const name = team[i].name;
+              const types = team[i].types;
+              const sprite = team[i].sprite;
+
+              const pName = teamSlots[i].querySelector('.poke-name');
+              const img = teamSlots[i].querySelector('img');
+
+              pName.innerHTML = name;
+              img.src = sprite;
+              pokemonBackgroundType(teamSlots[i], types);
+            }
+          });
+      } else if (btn === 'edit-btn') {
+        if (userData === undefined) {
+          showSnackbar('No team to edit');
+        } else if (confirm("You will be redirected to the create team page with your team data prepopulated")) {
+          sessionStorage.setItem("userData", JSON.stringify(userData));
+          location.href = '/create-team';
+        }
+      } else {
+        console.error("unkown button pressed");
+      }
+    }
+
+    const init = () => {
+      // set up form functionality
+      const form = document.querySelector('#find-team-form');
+      form.onsubmit = formSubmit;
+    }
+
+    window.onload = init;
+  </script>
 </head>
 
 <body>
@@ -45,23 +118,48 @@
 
   <section class="pure-g">
     <h1 class='pure-u-1 center'>View/Edit Team</h1>
-    <form class="pure-form pure-form-stacked pure-u-1">
+    <form class="pure-form pure-form-stacked pure-u-1" id='find-team-form'>
       <legend>Find Team</legend>
       <fieldset>
         <div class="pure-u-1-4">
           <label for="search-box">Username</label>
-          <input type="search" class='pure-u-23-24' id='search-box' placeholder="Search a user">
+          <input type="search" class='pure-u-23-24' id='search-box' placeholder="Search a user" required>
         </div>
-        <div class="pure-u-1-8">
-          <button class='pure-button pure-button-primary pure-u-23-24' id='search-btn'>Submit</button>
-        </div>
-        <div class="pure-u-1-8">
-          <button class='pure-button pure-button-primary pure-u-23-24' id='edit-btn'>Edit Team</button>
+        <div class="pure-u-17-24 button-container">
+          <button class='pure-button pure-button-primary pure-u-1-3' id='search-btn'>Get Team</button>
+          <button class='pure-button pure-button-primary pure-u-1-3' id='edit-btn'>Edit Team</button>
         </div>
       </fieldset>
     </form>
+    <h2 class="pure-u-1" id='team-name'>Team Name</h2>
+    <div class="poke-team">
+      <div class="poke-slot">
+        <img class='pure-img' src="team-placeholder.jpg" alt="pokemon sprite">
+        <p class='poke-name pure-u-1 center'>Pokemon Name</p>
+      </div>
+      <div class="poke-slot">
+        <img class='pure-img' src="team-placeholder.jpg" alt="pokemon sprite">
+        <p class='poke-name pure-u-1 center'>Pokemon Name</p>
+      </div>
+      <div class="poke-slot">
+        <img class='pure-img' src="team-placeholder.jpg" alt="pokemon sprite">
+        <p class='poke-name pure-u-1 center'>Pokemon Name</p>
+      </div>
+      <div class="poke-slot">
+        <img class='pure-img' src="team-placeholder.jpg" alt="pokemon sprite">
+        <p class='poke-name pure-u-1 center'>Pokemon Name</p>
+      </div>
+      <div class="poke-slot">
+        <img class='pure-img' src="team-placeholder.jpg" alt="pokemon sprite">
+        <p class='poke-name pure-u-1 center'>Pokemon Name</p>
+      </div>
+      <div class="poke-slot">
+        <img class='pure-img' src="team-placeholder.jpg" alt="pokemon sprite">
+        <p class='poke-name pure-u-1 center'>Pokemon Name</p>
+      </div>
+    </div>
   </section>
-
+  <div id="snackbar">Some text some message..</div>
 </body>
 
 </html>

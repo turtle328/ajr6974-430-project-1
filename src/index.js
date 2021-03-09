@@ -23,6 +23,7 @@ const urlStruct = {
   '/team-placeholder.jpg': mediaHandler.getPlaceholder,
   '/addTeam': postHandler.addTeam,
   '/getTeams': jsonHandler.getTeams,
+  '/getTeam': jsonHandler.getTeam,
   '/pokemon-shared.js': jsHandler.getPokemonScript,
   notFound: htmlHandler.get404Response,
 };

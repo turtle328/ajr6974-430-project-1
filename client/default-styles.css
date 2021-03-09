@@ -11,6 +11,18 @@
   text-align: center;
 }
 
+.poke-slot {
+  position: relative;
+  border: solid black 1px;
+  margin-bottom: 5px;
+  margin: 0.2em;
+}
+
+.poke-team {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
 .pure-menu-link:hover {
   background-color: red;
   color: white;
