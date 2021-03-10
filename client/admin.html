@@ -14,15 +14,67 @@
       padding: 0 3em;
     }
 
-    hr {
-      margin-top: 1em;
+    h2 {
+      font-size: 1.8em;
+      border-bottom: solid black 1px;
+      margin-top: 0.3em;
     }
 
     .custom-btn {
-      padding: 1em;
-      border-radius: 0.5em;
       width: 180px;
+      height: 50px;
+      border-radius: 0.5em;
     }
+
+    .user-submission {
+      margin-top: 1em;
+    }
+
+    .user-submission {
+      border: inset black 2px;
+      padding: 20px;
+    }
+
+    .admin-controls {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      column-gap: 30px;
+      row-gap: 10px;
+      margin-bottom: 1em;
+    }
+
+    .team-view {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 1em;
+    }
+
+    .team-slot {
+      text-align: center;
+      border: solid black 1px;
+    }
+    
+    @media screen and (max-width: 1024px) {
+      .team-view {
+        grid-template-columns: 1fr 1fr 1fr;
+      }
+    }
+
+    @media screen and (max-width: 630px) {
+      .team-view {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .admin-controls {
+        justify-content: center;
+      }
+
+      h2 {
+        text-align: center;
+      }
+    }
+    
   </style>
 </head>
 
@@ -54,7 +106,44 @@
     <div class="pure-u-1">
       <button class='pure-button pure-button-primary custom-btn' id='data-btn'>Get Team Data</button>
     </div>
-    <hr class='pure-u-1'>
+    <section class="pure-u-1 user-submissions">
+      <div class="user-submission">
+        <h2>Team Name by User</h2>
+        <div class="admin-controls">
+          <button type="submit" class='pure-button pure-button-primary custom-btn edit-btn'>Edit Team</button>
+          <button type="submit" class='pure-button pure-button-primary custom-btn random-edit-btn'>Edit Team
+            Random</button>
+          <button type="submit" class='pure-button button-danger custom-btn delete-btn'>Delete User</button>
+        </div>
+        <div class="team-view">
+          <div class="team-slot">
+            <img src="team-placeholder.jpg" alt="placeholder sprite" class='pure-img'>
+            <p>Pokemon Name</p>
+          </div>
+          <div class="team-slot">
+            <img src="team-placeholder.jpg" alt="placeholder sprite" class='pure-img' >
+            <p>Pokemon Name</p>
+          </div>
+          <div class="team-slot">
+            <img src="team-placeholder.jpg" alt="placeholder sprite" class='pure-img'>
+            <p>Pokemon Name</p>
+          </div>
+          <div class="team-slot">
+            <img src="team-placeholder.jpg" alt="placeholder sprite" class='pure-img'>
+            <p>Pokemon Name</p>
+          </div>
+          <div class="team-slot">
+            <img src="team-placeholder.jpg" alt="placeholder sprite" class='pure-img'>
+            <p>Pokemon Name</p>
+          </div>
+          <div class="team-slot">
+            <img src="team-placeholder.jpg" alt="placeholder sprite" class='pure-img'>
+            <p>Pokemon Name</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
   </main>
 
 </body>

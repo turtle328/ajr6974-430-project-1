@@ -171,7 +171,7 @@ const addTeam = (request, response, data) => {
   teams[data.user].team = team;
 
   if (responseCode === 201) {
-    responseJSON.message = 'New team sucessfully added!';
+    responseJSON.message = 'New team successfully added!';
     return respondJSON(request, response, responseCode, responseJSON);
   }
 
