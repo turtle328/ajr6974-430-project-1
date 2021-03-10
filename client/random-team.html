@@ -47,10 +47,12 @@
     #save-btn {
       margin-top: 1.2em;
       padding: 0.8em 0;
+      border-radius: 0.5em;
     }
 
     #generate-btn {
       margin-left: 1em;
+      border-radius: 0.5em;
     }
   </style>
   <script src="https://kit.fontawesome.com/182fd99499.js" crossorigin="anonymous"></script>
@@ -335,11 +337,11 @@
       <fieldset>
         <div class="pure-u-2-5">
           <label for="user">Username</label>
-          <input type="text" class='pure-u-23-24' id='user' required="" placeholder="TurboSlayer123">
+          <input type="text" class='pure-u-23-24' id='user' required maxlength="20" placeholder="TurboSlayer123">
         </div>
         <div class="pure-u-2-5">
           <label for="team-name">Team Name</label>
-          <input type="text" class='pure-u-23-24' id='team-name' required="" placeholder="Team Renegade">
+          <input type="text" class='pure-u-23-24' id='team-name' required maxlength="20" placeholder="Team Renegade">
         </div>
         <div class="pure-u-1-6 button-container">
           <button class='pure-button pure-button-primary pure-u-23-24' id='save-btn'>Save</button>
