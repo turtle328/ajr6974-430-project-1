@@ -51,10 +51,18 @@
     }
 
     .team-slot {
-      text-align: center;
       border: solid black 1px;
     }
-    
+
+    .poke-name {
+      margin: 0;
+      padding: 1em 0;
+      background-color: black;
+      color: white;
+      text-transform: capitalize;
+      text-align: center;
+    }
+
     @media screen and (max-width: 1024px) {
       .team-view {
         grid-template-columns: 1fr 1fr 1fr;
@@ -74,7 +82,6 @@
         text-align: center;
       }
     }
-    
   </style>
 </head>
 
@@ -102,7 +109,7 @@
 
   <main class="pure-g">
     <h1 class='pure-u-1'>Admin Page</h1>
-    <p class='pure-u-1' id='info'>View all user team data, edit it, or delete it.</p>
+    <p class='pure-u-1' id='info'>View user team data, edit it, or delete it.</p>
     <div class="pure-u-1">
       <button class='pure-button pure-button-primary custom-btn' id='data-btn'>Get Team Data</button>
     </div>
@@ -118,27 +125,27 @@
         <div class="team-view">
           <div class="team-slot">
             <img src="team-placeholder.jpg" alt="placeholder sprite" class='pure-img'>
-            <p>Pokemon Name</p>
-          </div>
-          <div class="team-slot">
-            <img src="team-placeholder.jpg" alt="placeholder sprite" class='pure-img' >
-            <p>Pokemon Name</p>
+            <p class='poke-name'>Pokemon Name</p>
           </div>
           <div class="team-slot">
             <img src="team-placeholder.jpg" alt="placeholder sprite" class='pure-img'>
-            <p>Pokemon Name</p>
+            <p class='poke-name'>Pokemon Name</p>
           </div>
           <div class="team-slot">
             <img src="team-placeholder.jpg" alt="placeholder sprite" class='pure-img'>
-            <p>Pokemon Name</p>
+            <p class='poke-name'>Pokemon Name</p>
           </div>
           <div class="team-slot">
             <img src="team-placeholder.jpg" alt="placeholder sprite" class='pure-img'>
-            <p>Pokemon Name</p>
+            <p class='poke-name'>Pokemon Name</p>
           </div>
           <div class="team-slot">
             <img src="team-placeholder.jpg" alt="placeholder sprite" class='pure-img'>
-            <p>Pokemon Name</p>
+            <p class='poke-name'>Pokemon Name</p>
+          </div>
+          <div class="team-slot">
+            <img src="team-placeholder.jpg" alt="placeholder sprite" class='pure-img'>
+            <p class='poke-name'>Pokemon Name</p>
           </div>
         </div>
       </div>
