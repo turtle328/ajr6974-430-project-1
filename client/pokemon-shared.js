@@ -50,6 +50,23 @@ const pokemonBackgroundType = (div, types) => {
   }
 };
 
+const populateTeamSlots = (team, slots) => {
+  for (let i = 0; i < team.length; i++) {
+    slots[i].pokeData = team[i];
+
+    const name = team[i].name;
+    const types = team[i].types;
+    const sprite = team[i].sprite;
+
+    const pName = slots[i].querySelector('.poke-name');
+    const img = slots[i].querySelector('img');
+
+    pName.innerHTML = name;
+    img.src = sprite;
+    pokemonBackgroundType(slots[i], types);
+  }
+}
+
 const handleResponse = (e) => {
   const xhr = e.target;
   const obj = xhr.response && JSON.parse(xhr.response);

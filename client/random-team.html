@@ -211,6 +211,27 @@
     }
 
     const init = () => {
+      // try to get stored team from session storage
+      let userData = sessionStorage.getItem('userData');
+      if (userData !== null) {
+        // clear session storage now that data has been retrieved
+        sessionStorage.clear();
+        userData = JSON.parse(userData);
+
+        const userTeam = userData.team;
+        const username = userData.user;
+        const teamName = userData.teamName;
+
+        const userField = document.querySelector('#user');
+        const teamNameField = document.querySelector('#team-name');
+
+        userField.value = username;
+        teamNameField.value = teamName;
+
+        const slots = document.querySelectorAll('.poke-slot');
+        populateTeamSlots(userTeam, slots);
+      }
+
       // set up lock functionality
       const locks = document.querySelectorAll('.fa-unlock');
 
