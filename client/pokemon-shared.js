@@ -67,6 +67,13 @@ const populateTeamSlots = (team, slots) => {
   }
 }
 
+const redirectWithData = (data, page) => {
+  if (confirm("You will be redirected to another page with your team data prepopulated")) {
+    sessionStorage.setItem("userData", JSON.stringify(data));
+    location.href = page;
+  }
+}
+
 const handleResponse = (e) => {
   const xhr = e.target;
   const obj = xhr.response && JSON.parse(xhr.response);

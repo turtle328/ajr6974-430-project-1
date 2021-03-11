@@ -22,7 +22,9 @@
       text-transform: capitalize;
     }
 
-    #search-btn, #edit-btn, #random-edit-btn {
+    #search-btn,
+    #edit-btn,
+    #random-edit-btn {
       margin-top: 1.1em;
       padding: 0.8em;
       min-width: 100px;
@@ -66,9 +68,8 @@
         const page = (btn === 'edit-btn') ? '/create-team' : '/random-team';
         if (userData === undefined) {
           showSnackbar('No team to edit');
-        } else if (confirm("You will be redirected to another page with your team data prepopulated")) {
-          sessionStorage.setItem("userData", JSON.stringify(userData));
-          location.href = page;
+        } else {
+          redirectWithData(userData, page);
         }
       } else {
         console.error("unkown button pressed");

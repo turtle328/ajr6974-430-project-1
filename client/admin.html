@@ -83,6 +83,80 @@
       }
     }
   </style>
+  <script src="pokemon-shared.js"></script>
+  <script>
+    let submissionContainer;
+    let submissionTemplate;
+
+    const deleteUser = (user) => {
+      console.log("deleting user");
+    }
+
+    const setupButtons = (userData, submission) => {
+      const editBtn = submission.querySelector('.edit-btn');
+      const randBtn = submission.querySelector('.random-edit-btn');
+      const deleteBtn = submission.querySelector('.delete-btn');
+
+      editBtn.onclick = (e) => {
+        redirectWithData(userData, '/create-team');
+      }
+      randBtn.onclick = (e) => {
+        redirectWithData(userData, '/random-team');
+      }
+      deleteBtn.onclick = (e) => {
+        deleteUser(userData.user);
+      }
+    }
+
+    const addSubmission = (userData) => {
+      const username = userData.user;
+      const teamName = userData.teamName;
+      const team = userData.team;
+
+      const submission = submissionTemplate.content.cloneNode(true);
+      
+      const title = submission.querySelector('.team-user-info');
+      const slots = submission.querySelectorAll('.team-slot');
+
+      title.innerHTML = `${teamName} by ${username}`;
+      populateTeamSlots(team, slots);
+
+      setupButtons(userData, submission)
+
+      submissionContainer.appendChild(submission);
+    }
+
+    const getUsers = (e) => {
+      // fetch data from getTeams endpoint
+      fetch('getTeams')
+        .then(response => response.json())
+        .then(data => {
+          // clear submissions before adding them
+          submissionContainer.innerHTML = "";
+
+          if (isEmpty(data)) {
+            const p = document.createElement('p');
+            p.innerHTML = "No users found :-(";
+            submissionContainer.appendChild(p);
+          }
+
+          for (const user in data) {
+            addSubmission(data[user]);
+          }
+        })
+    }
+
+    const init = () => {
+      submissionContainer = document.querySelector('#user-submissions');
+      submissionTemplate = document.querySelector('#submission-template');
+
+      const dataBtn = document.querySelector('#data-btn');
+
+      dataBtn.onclick = getUsers;
+    }
+
+    window.onload = init;
+  </script>
 </head>
 
 <body>
@@ -108,47 +182,50 @@
   </nav>
 
   <main class="pure-g">
-    <h1 class='pure-u-1'>Admin Page</h1>
-    <p class='pure-u-1' id='info'>View user team data, edit it, or delete it.</p>
-    <div class="pure-u-1">
-      <button class='pure-button pure-button-primary custom-btn' id='data-btn'>Get Team Data</button>
-    </div>
-    <section class="pure-u-1 user-submissions">
-      <div class="user-submission">
-        <h2>Team Name by User</h2>
-        <div class="admin-controls">
-          <button type="submit" class='pure-button pure-button-primary custom-btn edit-btn'>Edit Team</button>
-          <button type="submit" class='pure-button pure-button-primary custom-btn random-edit-btn'>Edit Team
-            Random</button>
-          <button type="submit" class='pure-button button-danger custom-btn delete-btn'>Delete User</button>
+    <section class='pure-u-1' id='information'>
+      <h1>Admin Page</h1>
+      <p>View user data, edit it, or delete it.</p>
+      <button class='pure-button pure-button-primary custom-btn' id='data-btn'>Get User Data</button>
+      <hr>
+    </section>
+    <section class="pure-u-1" id='user-submissions'>
+      <template id="submission-template">
+        <div class="user-submission">
+          <h2 class='team-user-info'>Team Name by User</h2>
+          <div class="admin-controls">
+            <button type="submit" class='pure-button pure-button-primary custom-btn edit-btn'>Edit Team</button>
+            <button type="submit" class='pure-button pure-button-primary custom-btn random-edit-btn'>Edit Team
+              Random</button>
+            <button type="submit" class='pure-button button-danger custom-btn delete-btn'>Delete User</button>
+          </div>
+          <div class="team-view">
+            <div class="team-slot">
+              <img src="team-placeholder.jpg" alt="placeholder sprite" class='pure-img'>
+              <p class='poke-name'>Pokemon Name</p>
+            </div>
+            <div class="team-slot">
+              <img src="team-placeholder.jpg" alt="placeholder sprite" class='pure-img'>
+              <p class='poke-name'>Pokemon Name</p>
+            </div>
+            <div class="team-slot">
+              <img src="team-placeholder.jpg" alt="placeholder sprite" class='pure-img'>
+              <p class='poke-name'>Pokemon Name</p>
+            </div>
+            <div class="team-slot">
+              <img src="team-placeholder.jpg" alt="placeholder sprite" class='pure-img'>
+              <p class='poke-name'>Pokemon Name</p>
+            </div>
+            <div class="team-slot">
+              <img src="team-placeholder.jpg" alt="placeholder sprite" class='pure-img'>
+              <p class='poke-name'>Pokemon Name</p>
+            </div>
+            <div class="team-slot">
+              <img src="team-placeholder.jpg" alt="placeholder sprite" class='pure-img'>
+              <p class='poke-name'>Pokemon Name</p>
+            </div>
+          </div>
         </div>
-        <div class="team-view">
-          <div class="team-slot">
-            <img src="team-placeholder.jpg" alt="placeholder sprite" class='pure-img'>
-            <p class='poke-name'>Pokemon Name</p>
-          </div>
-          <div class="team-slot">
-            <img src="team-placeholder.jpg" alt="placeholder sprite" class='pure-img'>
-            <p class='poke-name'>Pokemon Name</p>
-          </div>
-          <div class="team-slot">
-            <img src="team-placeholder.jpg" alt="placeholder sprite" class='pure-img'>
-            <p class='poke-name'>Pokemon Name</p>
-          </div>
-          <div class="team-slot">
-            <img src="team-placeholder.jpg" alt="placeholder sprite" class='pure-img'>
-            <p class='poke-name'>Pokemon Name</p>
-          </div>
-          <div class="team-slot">
-            <img src="team-placeholder.jpg" alt="placeholder sprite" class='pure-img'>
-            <p class='poke-name'>Pokemon Name</p>
-          </div>
-          <div class="team-slot">
-            <img src="team-placeholder.jpg" alt="placeholder sprite" class='pure-img'>
-            <p class='poke-name'>Pokemon Name</p>
-          </div>
-        </div>
-      </div>
+      </template>
     </section>
 
   </main>
