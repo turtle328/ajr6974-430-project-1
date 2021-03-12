@@ -134,7 +134,8 @@ const pokeObjToXml = (obj) => {
     obj.body.team.forEach((pokemon) => {
       xml
         += `<pokemon>
-        <name>${pokemon.name}</name>`;
+        <name>${pokemon.name}</name>
+        <id>${pokemon.id}</id>`;
       pokemon.types.forEach((type) => {
         xml += `<type>${type}</type>`;
       });

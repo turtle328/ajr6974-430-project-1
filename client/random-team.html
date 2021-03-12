@@ -118,10 +118,11 @@
         .then(response => response.json())
         .then(data => {
           const name = data.name;
+          const id = data.id;
           const types = getTypesList(data);
           const sprite = getSprite(data);
           const pokeData = {
-            name, types, sprite
+            name, id, types, sprite
           }
 
           const img = div.querySelector('img');

@@ -116,10 +116,11 @@
 
     const truncatePokeData = (data) => {
       const name = data.name;
+      const id = data.id;
       const sprite = getSprite(data);
       const types = getTypesList(data);
 
-      return { name, types, sprite };
+      return { name, id, types, sprite };
     }
 
     // Return an array of the selected opion values
