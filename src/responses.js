@@ -178,10 +178,25 @@ const addTeam = (request, response, data) => {
   return respondJSONMeta(request, response, responseCode);
 };
 
+const deleteUser = (request, response, data) => {
+  const responseJSON = {
+    message: 'User could not be found.'
+  }
+  const user = data.user;
+
+  if (teams[user] === undefined) {
+    respondJSON(request, response, 400, responseJSON);
+  } else {
+    delete teams[user];
+    respondJSONMeta(request, response, 204);
+  }
+}
+
 module.exports = {
   getRandomJokeResponse,
   getRandomJokesResponse,
   addTeam,
   getTeams,
   getTeam,
+  deleteUser,
 };

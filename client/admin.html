@@ -88,8 +88,21 @@
     let submissionContainer;
     let submissionTemplate;
 
-    const deleteUser = (user) => {
+    const deleteUser = (userToDelete, submissionDiv) => {
       console.log("deleting user");
+
+      const url = '/deleteUser';
+      const data = `user=${userToDelete}`;
+
+      postData(url, data)
+        .then(data => {
+          if (data.statusCode === 204) {
+            showSnackbar(`${userToDelete} successfully deleted`);
+            getUsers();
+          } else {
+            showSnackbar(data.message);
+          }
+        });
     }
 
     const setupButtons = (userData, submission) => {
@@ -104,7 +117,7 @@
         redirectWithData(userData, '/random-team');
       }
       deleteBtn.onclick = (e) => {
-        deleteUser(userData.user);
+        deleteUser(userData.user, submission);
       }
     }
 
@@ -114,7 +127,7 @@
       const team = userData.team;
 
       const submission = submissionTemplate.content.cloneNode(true);
-      
+
       const title = submission.querySelector('.team-user-info');
       const slots = submission.querySelectorAll('.team-slot');
 
@@ -227,9 +240,8 @@
         </div>
       </template>
     </section>
-
   </main>
-
+  <div id="snackbar">Some text some message..</div>
 </body>
 
 </html>

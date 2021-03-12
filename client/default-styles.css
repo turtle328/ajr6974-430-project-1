@@ -16,6 +16,10 @@ html, button, input, select, textarea, .pure-g [class *="pure-u"] {
   text-align: center;
 }
 
+.pure-menu {
+  background-color: white;
+}
+
 .poke-slot {
   position: relative;
   border: solid black 1px;

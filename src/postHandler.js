@@ -1,7 +1,7 @@
 const query = require('querystring');
 const jsonHandler = require('./responses');
 
-const addTeam = (request, response) => {
+const handePost = (request, response, callback) => {
   const body = [];
 
   request.on('error', (err) => {
@@ -18,10 +18,20 @@ const addTeam = (request, response) => {
     const bodyString = Buffer.concat(body).toString();
     const bodyParams = query.parse(bodyString);
 
-    jsonHandler.addTeam(request, response, bodyParams);
+    //jsonHandler.addTeam(request, response, bodyParams);
+    callback(request, response, bodyParams);
   });
+}
+
+const addTeam = (request, response) => {
+  handePost(request, response, jsonHandler.addTeam);
 };
+
+const deleteUser = (request, response) => {
+  handePost(request, response, jsonHandler.deleteUser);
+}
 
 module.exports = {
   addTeam,
+  deleteUser,
 };

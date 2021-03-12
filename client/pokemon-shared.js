@@ -77,7 +77,6 @@ const redirectWithData = (data, page) => {
 const handleResponse = (e) => {
   const xhr = e.target;
   const obj = xhr.response && JSON.parse(xhr.response);
-  console.dir(obj);
 
   if (obj.message) {
     showSnackbar(obj.message);
@@ -85,6 +84,27 @@ const handleResponse = (e) => {
     showSnackbar('Updated team');
   }
 };
+
+// post data using urlencoded format and fetch
+const postData = async (url, data) => {
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    },
+    body: data
+  });
+
+  if (response.bodyUsed) {
+    return response.json().then(res => {
+      res.statusCode = response.status;
+      return res;
+    });
+  } else {
+    return { statusCode: response.status };
+  }
+
+}
 
 const showSnackbar = (text) => {
   snackbar.innerHTML = text;

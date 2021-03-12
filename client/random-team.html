@@ -217,7 +217,7 @@
       let userData = sessionStorage.getItem('userData');
       if (userData !== null) {
         // clear session storage now that data has been retrieved
-        sessionStorage.clear();
+        sessionStorage.removeItem('userData');
         userData = JSON.parse(userData);
 
         const userTeam = userData.team;

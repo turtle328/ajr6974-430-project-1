@@ -19,12 +19,14 @@ const urlStruct = {
   '/random-jokes': jsonHandler.getRandomJokesResponse,
   '/joke-client': htmlHandler.getClientResponse,
   '/default-styles.css': cssHandler.getDefaultStyleResponse,
+  '/pokemon-shared.js': jsHandler.getPokemonScript,
+  '/pokemon-team-builder.png': mediaHandler.getLogo,
   '/sleeping-pikachu.png': mediaHandler.getPikachu,
   '/team-placeholder.jpg': mediaHandler.getPlaceholder,
   '/addTeam': postHandler.addTeam,
+  '/deleteUser': postHandler.deleteUser,
   '/getTeams': jsonHandler.getTeams,
   '/getTeam': jsonHandler.getTeam,
-  '/pokemon-shared.js': jsHandler.getPokemonScript,
   notFound: htmlHandler.get404Response,
 };
 
