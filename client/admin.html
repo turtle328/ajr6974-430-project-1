@@ -89,8 +89,6 @@
     let submissionTemplate;
 
     const deleteUser = (userToDelete) => {
-      console.log("deleting user");
-
       const url = '/deleteUser';
       const data = `user=${userToDelete}`;
 
@@ -117,7 +115,9 @@
         redirectWithData(userData, '/random-team');
       }
       deleteBtn.onclick = (e) => {
-        deleteUser(userData.user);
+        if (confirm(`Are you sure you want to delete ${userData.user} and their team ${userData.teamName}?`)) {
+          deleteUser(userData.user);
+        }
       }
     }
 
