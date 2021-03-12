@@ -181,6 +181,7 @@ const getTeam = (request, response, params, acceptedTypes) => {
   }
 };
 
+// TODO: GET THIS WORKING FOR XML AND HEAD REQUEST
 // params is needed cause of url struct, but is not necessary for this method
 // eslint-disable-next-line no-unused-vars
 const getTeams = (request, response, params, acceptedTypes) => {

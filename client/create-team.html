@@ -301,6 +301,8 @@
     const search = (e) => {
       e.preventDefault();
 
+      // make sure list is sorted before copying
+      pokeDataList.sort((a, b) => a.id - b.id);
       // new filtered list
       let filteredList = [...pokeDataList];
       // selected types
