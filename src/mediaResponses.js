@@ -26,7 +26,7 @@ const getPlaceholder = (request, response) => {
 
 const getLogo = (request, response) => {
   loadImage(request, response, 'image/png', '../client/pokemon-team-builder.png');
-}
+};
 
 module.exports = {
   getPikachu,

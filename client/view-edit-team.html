@@ -49,13 +49,14 @@
         fetch(url)
           .then(response => response.json())
           .then(data => {
-            if (data === 'no-user-found') {
-              showSnackbar('No user found');
+            showSnackbar(data.message);
+
+            if (!data.success) {
               return;
             }
 
-            userData = data;
-            const team = data.team;
+            userData = data.body;
+            const team = userData.team;
 
             const teamSlots = document.querySelectorAll('.poke-slot');
             const teamNameHeader = document.querySelector('#team-name');
@@ -111,8 +112,8 @@
   <section class="pure-g">
     <h1 class='pure-u-1 center'>View/Edit Team</h1>
     <form class="pure-form pure-form-stacked pure-u-1" id='find-team-form'>
-      <legend>Find Team</legend>
       <fieldset>
+        <legend>Find Team</legend>
         <div class="pure-u-1-4">
           <label for="search-box">Username</label>
           <input type="search" class='pure-u-23-24' id='search-box' placeholder="Search a user" required>

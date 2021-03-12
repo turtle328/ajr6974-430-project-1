@@ -106,11 +106,14 @@ const postData = async (url, data) => {
 
 }
 
+let snackTimeout;
+
 const showSnackbar = (text) => {
+  clearTimeout(snackTimeout);
   snackbar.innerHTML = text;
   snackbar.style.marginLeft = `-${snackbar.offsetWidth / 2}px`;
   snackbar.classList.add('show');
-  setTimeout(() => {
+  snackTimeout = setTimeout(() => {
     snackbar.classList.remove('show');
   }, 3000);
 }

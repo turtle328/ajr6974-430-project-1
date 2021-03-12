@@ -18,10 +18,10 @@ const handePost = (request, response, callback) => {
     const bodyString = Buffer.concat(body).toString();
     const bodyParams = query.parse(bodyString);
 
-    //jsonHandler.addTeam(request, response, bodyParams);
+    // jsonHandler.addTeam(request, response, bodyParams);
     callback(request, response, bodyParams);
   });
-}
+};
 
 const addTeam = (request, response) => {
   handePost(request, response, jsonHandler.addTeam);
@@ -29,7 +29,7 @@ const addTeam = (request, response) => {
 
 const deleteUser = (request, response) => {
   handePost(request, response, jsonHandler.deleteUser);
-}
+};
 
 module.exports = {
   addTeam,

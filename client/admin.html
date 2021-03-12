@@ -88,7 +88,7 @@
     let submissionContainer;
     let submissionTemplate;
 
-    const deleteUser = (userToDelete, submissionDiv) => {
+    const deleteUser = (userToDelete) => {
       console.log("deleting user");
 
       const url = '/deleteUser';
@@ -117,7 +117,7 @@
         redirectWithData(userData, '/random-team');
       }
       deleteBtn.onclick = (e) => {
-        deleteUser(userData.user, submission);
+        deleteUser(userData.user);
       }
     }
 
@@ -201,7 +201,7 @@
       <button class='pure-button pure-button-primary custom-btn' id='data-btn'>Get User Data</button>
       <hr>
     </section>
-    <section class="pure-u-1" id='user-submissions'>
+    <div class="pure-u-1" id='user-submissions'>
       <template id="submission-template">
         <div class="user-submission">
           <h2 class='team-user-info'>Team Name by User</h2>
@@ -239,7 +239,7 @@
           </div>
         </div>
       </template>
-    </section>
+    </div>
   </main>
   <div id="snackbar">Some text some message..</div>
 </body>

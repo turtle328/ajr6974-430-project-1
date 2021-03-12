@@ -3,7 +3,6 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Random Teams</title>
   <link rel="stylesheet" href="https://unpkg.com/purecss@2.0.5/build/pure-min.css"
@@ -301,8 +300,8 @@
       Random Team Generator
     </h1>
     <form class="pure-form pure-u-1" id='generation-form'>
-      <legend>Generation Options</legend>
       <fieldset>
+        <legend>Generation Options</legend>
         <label for="random-any" class='radio-label'>
           <input type="radio" name="generation-option" id="random-any" aria-disabled="true" checked> Any</label>
         <label for="random-feo" class='radio-label'>
@@ -333,8 +332,8 @@
       </fieldset>
     </form>
     <form class="pure-form pure-form-stacked pure-u-1" id='save-form' action="/addTeam" method="post">
-      <legend>Save Team</legend>
       <fieldset>
+        <legend>Save Team</legend>
         <div class="pure-u-2-5">
           <label for="user">Username</label>
           <input type="text" class='pure-u-23-24' id='user' required maxlength="20" placeholder="TurboSlayer123">

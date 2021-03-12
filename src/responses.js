@@ -123,6 +123,31 @@ const getRandomJokesResponse = (request, response, params, acceptedTypes, httpMe
 // store teams
 const teams = {};
 
+const pokeObjToXml = (obj) => {
+  let xml = `<success>${obj.success}</success>
+    <message>${obj.message}</message>`;
+  if (obj.body !== undefined) {
+    xml += `<body>
+      <user>${obj.body.user}</user>
+      <teamName>${obj.body.teamName}</teamName>
+      <team>\n`;
+    obj.body.team.forEach((pokemon) => {
+      xml
+        += `<pokemon>
+        <name>${pokemon.name}</name>`;
+      pokemon.types.forEach((type) => {
+        xml += `<type>${type}</type>`;
+      });
+      xml += `<sprite>${pokemon.sprite}</sprite>`;
+      xml += '\n</pokemon>\n';
+    });
+    xml
+      += ` </team>
+    </body>`;
+  }
+  return xml;
+};
+
 const respondJSON = (request, response, status, object) => {
   response.writeHead(status, { 'Content-Type': 'application/json' });
   response.write(JSON.stringify(object));
@@ -134,14 +159,31 @@ const respondJSONMeta = (request, response, status) => {
   response.end();
 };
 
-const getTeam = (request, response, params) => {
-  const user = params.get("user");
-  const team = teams[user] ?? 'no-user-found';
+const getTeam = (request, response, params, acceptedTypes) => {
+  const data = {
+    success: false,
+    message: 'No user found.',
+  };
 
-  respondJSON(request, response, 200, team);
+  const user = params.get('user');
+
+  if (teams[user] !== undefined) {
+    data.body = teams[user];
+    data.success = true;
+    data.message = `${user} was found.`;
+  }
+
+  if (acceptedTypes.includes('text/xml')) {
+    const xml = pokeObjToXml(data);
+    respond(request, response, xml, acceptedTypes);
+  } else {
+    respondJSON(request, response, 200, data);
+  }
 };
 
-const getTeams = (request, response) => {
+// params is needed cause of url struct, but is not necessary for this method
+// eslint-disable-next-line no-unused-vars
+const getTeams = (request, response, params, acceptedTypes) => {
   respondJSON(request, response, 200, teams);
 };
 
@@ -180,9 +222,9 @@ const addTeam = (request, response, data) => {
 
 const deleteUser = (request, response, data) => {
   const responseJSON = {
-    message: 'User could not be found.'
-  }
-  const user = data.user;
+    message: 'User could not be found.',
+  };
+  const { user } = data;
 
   if (teams[user] === undefined) {
     respondJSON(request, response, 400, responseJSON);
@@ -190,7 +232,7 @@ const deleteUser = (request, response, data) => {
     delete teams[user];
     respondJSONMeta(request, response, 204);
   }
-}
+};
 
 module.exports = {
   getRandomJokeResponse,
