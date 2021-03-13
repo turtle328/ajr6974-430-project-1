@@ -37,6 +37,9 @@
     'use strict'
     let userData;
 
+    // method for grabbing a specified user from the server
+    // also sets up button functionality for redirecting user
+    // to another page to edit team data
     const formSubmit = (e) => {
       e.preventDefault();
 
@@ -77,8 +80,8 @@
       }
     }
 
+    // sets up form functionality
     const init = () => {
-      // set up form functionality
       const form = document.querySelector('#find-team-form');
       form.onsubmit = formSubmit;
     }

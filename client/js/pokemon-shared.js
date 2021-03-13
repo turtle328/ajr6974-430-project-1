@@ -21,10 +21,15 @@ const typeColors = {
   fairy: '#D685AD',
 };
 
+// Source: https://stackoverflow.com/a/679937/7838349
+// Refactored into an error function
+// Checks if an object is empty
 const isEmpty = obj => Object.keys(obj).length === 0;
 
+// Extracts the sprite data from the rather large pokeData object (it's quite nested in there)
 const getSprite = data => data.sprites.other['official-artwork'].front_default;
 
+// Extracts the types data from the pokeData object
 const getTypesList = (data) => {
   const types = [];
 
@@ -50,6 +55,8 @@ const pokemonBackgroundType = (div, types) => {
   }
 };
 
+
+// Takes in team data and its respective HTML slots and fills them in
 const populateTeamSlots = (team, slots) => {
   for (let i = 0; i < team.length; i++) {
     slots[i].pokeData = team[i];
@@ -67,6 +74,8 @@ const populateTeamSlots = (team, slots) => {
   }
 }
 
+// Redirects the user to another page with its data filled in via session storage
+// Also with confirm user before redirecting
 const redirectWithData = (data, page) => {
   if (confirm("You will be redirected to another page with your team data prepopulated")) {
     sessionStorage.setItem("userData", JSON.stringify(data));
@@ -74,6 +83,7 @@ const redirectWithData = (data, page) => {
   }
 }
 
+// For handling the response for a POST ajax call
 const handleResponse = (e) => {
   const xhr = e.target;
   const obj = xhr.response && JSON.parse(xhr.response);
@@ -85,7 +95,7 @@ const handleResponse = (e) => {
   }
 };
 
-// post data using urlencoded format and fetch
+// Post data using urlencoded format and fetch
 const postData = async (url, data) => {
   const response = await fetch(url, {
     method: 'POST',
@@ -108,6 +118,8 @@ const postData = async (url, data) => {
 
 let snackTimeout;
 
+// Allows you to display information near the bottom of the screen for a few seconds
+// Source: https://www.w3schools.com/howto/howto_js_snackbar.asp
 const showSnackbar = (text) => {
   clearTimeout(snackTimeout);
   snackbar.innerHTML = text;

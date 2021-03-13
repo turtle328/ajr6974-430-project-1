@@ -15,9 +15,6 @@ const urlStruct = {
   '/random-team': htmlHandler.getRandomResponse,
   '/edit-team': htmlHandler.getEditResponse,
   '/admin': htmlHandler.getAdminResponse,
-  '/random-joke': jsonHandler.getRandomJokeResponse,
-  '/random-jokes': jsonHandler.getRandomJokesResponse,
-  '/joke-client': htmlHandler.getClientResponse,
   '/default-styles.css': cssHandler.getDefaultStyleResponse,
   '/pokemon-shared.js': jsHandler.getPokemonScript,
   '/pokemon-team-builder.png': mediaHandler.getLogo,
@@ -30,6 +27,8 @@ const urlStruct = {
   notFound: htmlHandler.get404Response,
 };
 
+// uses the url struct to serve up a page of a specified path name
+// also passes search params and other info to the handlers
 const onRequest = (request, response) => {
   const baseUrl = `http://${request.headers.host}/`;
   const parsedUrl = new URL(request.url, baseUrl);

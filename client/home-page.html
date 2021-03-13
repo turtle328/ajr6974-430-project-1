@@ -91,7 +91,7 @@
           <p>The Pokemon Team Builder API currently has two main endpoints.</p>
           <p><a href="/getTeams">/getTeams</a> &mdash; Gets the entire list of teams stored on the server.</p>
           <p><a href="/getTeam?user=x">/getTeam?user=x</a> &mdash; Gets a team under a
-            specified username. If the user does not exist it will return "no-user-found".</p>
+            specified username. If the user does not exist it will return false for "success".</p>
           <p>Both endpoints respond in JSON by default but they can send XML instead if a 'text/xml' Accept header is
             used.</p>
       </div>

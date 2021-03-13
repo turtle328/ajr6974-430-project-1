@@ -9,7 +9,6 @@
     integrity="sha384-LTIDeidl25h2dPxrB2Ekgc9c7sEC3CWGM6HeFmuDNUjX76Ert4Z4IY714dhZHPLd" crossorigin="anonymous">
   <link rel="stylesheet" href="https://unpkg.com/purecss@2.0.5/build/grids-responsive-min.css" />
   <link rel="stylesheet" href="default-styles.css">
-
   <style>
     button {
       margin-top: 0.5em;
@@ -114,6 +113,8 @@
     let pokeDataList = [];
     const team = [];
 
+    // Slices off most of the unnecessary data returned from the poke-api 
+    // and makes it signifcantly easier to work with
     const truncatePokeData = (data) => {
       const name = data.name;
       const id = data.id;
@@ -141,6 +142,8 @@
       return result;
     }
 
+    // Fetches the list of pokemon and their respective URLs
+    // that in turn gets fetched
     const fetchPokemon = () => {
       const url = `https://pokeapi.co/api/v2/pokemon?limit=${COUNT}`;
       fetch(url)
@@ -152,6 +155,8 @@
         });
     }
 
+    // Fetches data about a specific pokemon and adds its data to an array
+    // and displays it on a page
     const fetchPokemonData = (poke) => {
       const url = poke.url;
 
@@ -160,7 +165,7 @@
           .then(response => {
             if (response.ok) return response.json();
 
-            // retry with the '/' removed
+            // retry with the '/' removed, seems to work for some reason
             if (retries > 0) {
               const newUrl = url.slice(0, -1);
               console.log("Retrying with new URL: " + newUrl);
@@ -188,6 +193,7 @@
       fetchRetry(url);
     }
 
+    // Creates and displays a pickable pokemon slot from pokeData
     const displayPokemon = (pokeData) => {
       const name = pokeData.name;
       const types = pokeData.types;
@@ -220,6 +226,7 @@
       contentContainer.appendChild(pokeContainer);
     }
 
+    // Displays selectable Pokemon from a passed in list of pokedata
     const displayPokemonFromList = (list) => {
       contentContainer.innerHTML = "";
       for (const pokeData of list) {
@@ -227,6 +234,7 @@
       }
     }
 
+    // Simple method for adding a pokemon to the teams list and redisplays team with the new Pokemon
     const addToTeam = (pokeData) => {
       // if team is maxed out return
       if (team.length >= TEAM_SIZE) {
@@ -237,6 +245,8 @@
       displayTeam();
     }
 
+    // Displays pokemon team from data found in team array
+    // Any team under 6 Pokemon will also display 6 - Team.Length placeholder slots
     const displayTeam = () => {
       for (let i = 0; i < team.length; i++) {
         const pokeDiv = document.querySelector(`#team-slot-${i + 1}`);
@@ -272,11 +282,13 @@
       }
     }
 
+    // Removes a pokemon from the team list and redisplays the team
     const removeFromSlot = (slotNum) => {
       team.splice(slotNum, 1);
       displayTeam();
     }
 
+    // Post method for saving user data to the server
     const sendPost = (e) => {
       e.preventDefault();
 
@@ -299,6 +311,7 @@
       return false;
     };
 
+    // Uses the inputed information from the search form to create a new filtered list to display from
     const search = (e) => {
       e.preventDefault();
 
@@ -376,10 +389,13 @@
       return displayPokemonFromList(filteredList);
     }
 
+    // Runs when page is first loaded, sets up variables and displays the pokedata
     const init = () => {
       contentContainer = document.querySelector('#pokemon-selection');
       
       const pokeData = sessionStorage.getItem('pokemonData');
+
+      // try to get stored pokedata otherwise fetch it from the external poke-api
       if (pokeData !== null) {
         pokeDataList = JSON.parse(pokeData);
         displayPokemonFromList(pokeDataList);
@@ -387,6 +403,7 @@
         fetchPokemon();
       }
 
+      // Check if data has been passed in from another page
       let userData = sessionStorage.getItem('userData');
       if (userData !== null) {
         // clear session storage now that data has been retrieved
