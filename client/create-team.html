@@ -330,7 +330,7 @@
         if (searchOption === 'and') {
           filteredList = pokeDataList.filter(pokeData => {
             // get types array
-            const types = getTypesList(pokeData);
+            const types = pokeData.types;
 
             for (const selectedType of selectedTypes) {
               if (!types.includes(selectedType)) {
@@ -343,7 +343,7 @@
         // if OR
         else if (searchOption === 'or') {
           filteredList = pokeDataList.filter(pokeData => {
-            const types = getTypesList(pokeData);
+            const types = pokeData.types;
 
             for (const selectedType of selectedTypes) {
               if (types.includes(selectedType)) {
@@ -356,7 +356,7 @@
         // if NOT
         else if (searchOption === 'not') {
           filteredList = pokeDataList.filter(pokeData => {
-            const types = getTypesList(pokeData);
+            const types = pokeData.types;
 
             for (const selectedType of selectedTypes) {
               if (types.includes(selectedType)) {
@@ -369,7 +369,7 @@
         // else (ONLY)
         else {
           filteredList = pokeDataList.filter(pokeData => {
-            const types = getTypesList(pokeData);
+            const types = pokeData.types;
 
             for (const selectedType of selectedTypes) {
               if (types.includes(selectedType) && types.length === 1) {
