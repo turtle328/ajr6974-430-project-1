@@ -64,7 +64,7 @@
             const teamSlots = document.querySelectorAll('.poke-slot');
             const teamNameHeader = document.querySelector('#team-name');
 
-            teamNameHeader.innerHTML = `${data.teamName} by ${data.user}`;
+            teamNameHeader.innerHTML = `${userData.teamName} by ${userData.user}`;
 
             populateTeamSlots(team, teamSlots);
           });
